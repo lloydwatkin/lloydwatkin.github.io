@@ -1,1 +1,5 @@
-_site/
+.project
+.settings
+.DS_Store
+node_modules
+*.swp

@@ -1,4 +1,7 @@
-lloydwatkin.github.io
-=====================
+talks.evilprofessor.co.uk
+==========================
 
-Repo to hold a list of public talks
+A repository to hold future public talks.
+
+Built on [reveal.js](https://github.com/hakimel/reveal.js)
+
