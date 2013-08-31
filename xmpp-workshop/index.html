@@ -16,6 +16,7 @@ theme: night
     </section>
     
     <section>
+    <section>
     <h2>What is XMPP?</h2>
     <br/>
     <p>eXtensible Messaging and Presence Protocol<br/>
@@ -23,6 +24,8 @@ theme: night
     <br/>
     <p>Started around 1998<br/>
     Became part of IETF in 2002</p>
+    <br/>
+    <p><a href="http://xmpp.org">http://xmpp.org</a></p>
     <br/>
     <img src="images/220px-XMPP_logo.svg.png" />
     </section>
@@ -43,5 +46,103 @@ theme: night
     <br/>
     <p>Many, many more places which don't advertise its usage...</p>
     </section>
+        
+    <section>
+    <h2>What is it?</h2>
+
+    <p>Came about in an era of closed protocol chat systems:</p>
+    <p>AIM, ICQ, Yahoo! Messenger, etc</p>
+
+    <ul>
+        <li>Designed to be like the web</li>
+        <li>Open standard</li>
+        <li>Federated</li>
+        <li>Secure</li>
+        <li>Scalable (messages are pushed)</li>
+        <li>Decentralised</li>
+        <li>Asynchronous</li>
+        <li>Community</li>
+        <li>Proven (14 years old)</li>
+    </ul>
+    </section>
     
+    </section>
+    
+    <section>
+    
+    <h2>XMPP-FTW</h2>
+        
+    <p>Server side library which allows users to interact with 
+    XMPP over a websocket using JSON</p>
+    <br/>    
+    <p><a href="https://xmpp-ftw.jit.su">https://xmpp-ftw.jit.su</a></p>
+    <p><a href="https://github.com/lloydwatkin/xmpp-ftw">https://github.com/lloydwatkin/xmpp-ftw</a></p>
+    <br/>
+
+    <ul>
+        <li>xmpp-ftw</li>
+        <li>xmpp-ftw-demo</li>
+        <li>xmpp-ftw-avatar</li>
+        <li>xmpp-ftw-buddycloud</li>
+        <li>xmpp-ftw-disco</li>
+        <li>xmpp-ftw-item-parser</li>
+        <li>xmpp-ftw-muc</li>
+        <li>xmpp-ftw-pubsub</li>
+        <li>xmpp-ftw-regiter</li>
+        <li>xmpp-ftw-superfeedr</li>
+    </ul>
+    </section>
+    
+    <section>
+        <h2>Lets get connected...</h2>
+        <br/>
+        <pre><code>
+&lt;script type="text/javascript" src="/scripts/primus.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript"&gt;
+    var socket = new Primus('//' + MY_IP_ADDRESS)
+    socket.on('error', function(error) { console.log(error) })
+
+    socket.on('connect', function(data) {
+        console.log('Connected')
+    })
+    
+    socket.on('connect.fail', function(reason) {
+        console.log("Connection failed: " + reason)
+    })
+  
+    socket.on('disconnect', function() {
+        console.log('disconnected')
+        socket = null
+    })
+&lt;/script&gt;
+        </code></pre>
+        
+    </section>
+    
+    <section>
+    
+    <h2>Authentication</h2>
+    <pre><code>
+    socket.emit(
+         'xmpp.login',
+         { 
+             "jid": "test@example.com",
+             "password": "password",
+             "host": MY_IP_ADDRESS
+         }
+        )
+    </code></pre>
+        
+    <p>...then listen for authentication event...</p>
+        
+    <pre><code>
+    socket.on('xmpp.connection', function(data) { 
+        console.log(data)
+        /*
+         * 'online'
+         */
+    })
+    </code></pre>
+        
+    </section>
 </div>
