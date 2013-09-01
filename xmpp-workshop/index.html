@@ -7,12 +7,12 @@ theme: night
 
 <div class="slides">
     <section>
-            <h1>XMPP-FTW<br></h1>
-            <div>
-            <img src="./images/aardvark-14342.jpg" /><br />
-            </div>
-            <div>Lloyd Watkin</div>
-            <div>lloyd@evilprofessor.co.uk ::: @lloydwatkin</div>      
+        <h1>XMPP-FTW<br></h1>
+        <div>
+        <img src="./images/aardvark-14342.jpg" /><br />
+        </div>
+        <div>Lloyd Watkin</div>
+        <div>lloyd@evilprofessor.co.uk ::: @lloydwatkin</div>   
     </section>
     
     <section>
@@ -52,7 +52,7 @@ theme: night
 
     <p>Came about in an era of closed protocol chat systems:</p>
     <p>AIM, ICQ, Yahoo! Messenger, etc</p>
-
+    <br/>
     <ul>
         <li>Designed to be like the web</li>
         <li>Open standard</li>
@@ -66,6 +66,93 @@ theme: night
     </ul>
     </section>
     
+        
+    <section>
+    <h2>Where XMPP wins</h2>
+    <p>At its core very simple set of functionality:</p>
+    <p><em>IM and Presence</em></p>
+    <br/>
+    <p>The 'X' is what makes XMPP such a a great system:</p>
+    <ul>
+        <li>Multi-user chat [XEP-0045]</li>
+        <li>Publish-Subscribe [XEP-0060]</li>
+        <li>Jingle (P2P media sessions) [XEP-0166]</li>
+    </ul>
+    <br/><br/>
+    <p><a href="http://xmpp.org/xmpp-protocols/xmpp-extensions/">http://xmpp.org/xmpp-protocols/xmpp-extensions/</a></p>
+    <br/>
+    <p>People also build their own or overload existing 
+    standards e.g.</p>
+    <ul>
+        <li><a href="http://buddycloud.org">buddycloud</a></li>
+        <li>Chesspark (uses MUC as a data transport)</li>
+    </ul>
+
+    </section>
+        
+    <section>
+    <h2>Concepts</h2>
+    <p>JID: Your unique identifier on the network</p>
+    <br/>
+    <p>
+    <font color="#ffff00">lloyd</font>@
+    <font color="#0099cc">evilprofessor.co.uk</font>/
+    <font color="#00ff00">mozldn</font>
+    </p>
+    <br/>
+
+    <ul>
+      <li><font color="#ffff00">lloyd</font>: Username</li>
+      <li><font color="#0099cc">evilprofessor.co.uk</font>: Domain</li>
+      <li><span style="color: rgb(0,255,0);">mozldn</span>: Resource</li>
+    </ul>
+    <br/><br/>
+    <p>A user can be logged in from multiple resources at once (phone, desktop, laptop, tablet, etc). </p>
+        
+    <p>Each can have a priority which helps route messages to the appropriate device.</p>
+        
+    </section>
+        
+    <section>
+      <h2>XMPP Base Messages</h2>
+      <p class="left">Messages:</p>
+      <pre><code class="xml">
+      &lt;message from="lloyd@evilprofessor.co.uk/boat-house"  
+            to="megan@evilprofessor.co.uk/home" type="chat"&gt;
+          &lt;body&gt;I'm giving my talk at JS workshop&lt;/body&gt;
+      &lt;/message&gt;
+      </code></pre>
+      <p class="left">Presence:</p>
+      <pre><code class="xml">
+      &lt;presence type="dnd"&gt;
+          &lt;status&gt;Giving a talk....&lt;/status&gt;
+          &lt;priority&gt;-1&lt;priority&gt;
+      &lt;/presence&gt;
+      </code></pre>
+
+      <p class="left">IQ:</p>
+      <pre><code class="xml">
+      &lt;iq from="lloyd@evilprofessor.co.uk/boat-house" id="1"&gt;
+         &lt;query xmlns="jabber:iq:roster" /&gt;
+      &lt;/iq&gt;
+      </code></pre>
+    </section>
+        
+    </section>
+    
+    <section>
+    <h2>XMPP in the browser</h2>
+    
+    <p>Most popular project is <a href="http://strophe.im/strophejs/">strophe.js</a></p>
+    <br/>
+    <p>Connects to XMPP server using BOSH (long polling).</p>
+    <p>Websocket extension for XMPP being finalised</p>
+    <br/>
+    <p><strong>But...</strong></p>
+    <br/>
+    <p>Still requires handling of XML</p>
+    <p>Browser is all about JSON: <font color="#00ff33">quick, simple, fast</font></p>
+    <p>Web developers want <font color="#0099cc">minimal APIs</font> and <font color="#0099cc">fast implementation</font></p>
     </section>
     
     <section>
@@ -97,9 +184,9 @@ theme: night
         <h2>Lets get connected...</h2>
         <br/>
         <pre><code>
-&lt;script type="text/javascript" src="/scripts/primus.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="{ MY_IP_ADDRESS }/scripts/primus.js"&gt;&lt;/script&gt;
 &lt;script type="text/javascript"&gt;
-    var socket = new Primus('//' + MY_IP_ADDRESS)
+    var socket = new Primus('//' + { MY_IP_ADDRESS })
     socket.on('error', function(error) { console.log(error) })
 
     socket.on('connect', function(data) {
@@ -128,7 +215,7 @@ theme: night
          { 
              "jid": "test@example.com",
              "password": "password",
-             "host": MY_IP_ADDRESS
+             "host": { MY_IP_ADDRESS }
          }
         )
     </code></pre>
@@ -144,5 +231,67 @@ theme: night
     })
     </code></pre>
         
+    </section>
+    
+    <section>
+    
+    <section>
+        
+    <h2>Lets do some things...</h2>
+    <br/>
+    <p style="font-weight: bold">Set up a couple of basic listeners:</p>
+        
+    <pre><code>
+    socket.on('xmpp.client.error', console.error)
+    </code></pre>
+    <br/>    
+    <p style="font-weight: bold">Step #1: Rude not to say hello:</p>
+        
+    <pre><code class="javascript">
+    socket.emit(
+      'xmpp.presence',
+      { status: 'Trying out XMPP!', priority: 10, show: 'online' }
+    )
+    </code></pre>
+        
+    <p>This now means that the server knows to send any 
+    packets your way</p>
+    </section>
+    
+    <section>
+    <h2>Get to know each other...</h2>
+        
+    <p>Get the JIDs of the people next to you and lets send them 
+    some messages...</p>
+    <br/>    
+    <p>Listen for messages:</p>
+    <pre><code>
+    socket.on(
+      'xmpp.chat.message', 
+      function(data) { console.log(data) }
+    )
+    </code></pre>
+    <br/>
+    <p>Send a message:</p>
+    <pre><code>
+    socket.emit(
+      'xmpp.chat.message',
+      {
+          to: { person } + '@example.com',
+          content: 'How much longer? Yawn!'
+      }
+    )
+    </code></pre>
+
+    </section>
+
+    <section>
+    <h2>Presence</h2>
+    </section>
+        
+    </section>
+    
+    <section>
+    <h2>Publish Subscribe</h2>
     </section>
 </div>
