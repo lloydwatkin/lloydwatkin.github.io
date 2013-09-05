@@ -16,6 +16,21 @@ theme: night
     </section>
     
     <section>
+    <h2>Me</h2>
+        
+    <p><u>Lloyd Watkin</u></p>
+    <p>Software Engineer @ Surevine</p>
+    <br/>
+    <p><a href="https://twitter.com/lloydwatkin">@lloydwatkin</a></p>
+    <p><a href="http://www.evilprofessor.co.uk">http://evilprofessor.co.uk</a></p>
+    <p><a href="https://github.com/lloydwatkin">lloydwatkin on github</a> ...and most other places</p>
+    <br/>
+    <p>Organise world record breaking event Scuba Santas</p>
+    <p>Member of the <a href="http://xmpp.org">XSF</a></p>
+    <p>I like open source stuff</p>
+    </section>
+    
+    <section>
     <section>
     <h2>What is XMPP?</h2>
     <br/>
@@ -175,31 +190,104 @@ theme: night
         <li>xmpp-ftw-item-parser</li>
         <li>xmpp-ftw-muc</li>
         <li>xmpp-ftw-pubsub</li>
-        <li>xmpp-ftw-regiter</li>
+        <li>xmpp-ftw-register</li>
         <li>xmpp-ftw-superfeedr</li>
     </ul>
+    </section>
+    
+    <section>
+        <section>
+        <h2>Messaging</h2>
+        <br/>
+        <h3>Sending a message</h3>
+            
+        <pre><code>
+        socket.emit(
+            'xmpp.chat.message',
+            {
+                "to": "other@evilprofessor.co.uk",
+                "content": "Hello world"
+            }
+        )
+        </code></pre>
+            
+        <br/>
+        <h3>Receiving a message</h3>
+            
+        <pre><code>
+        socket.on('xmpp.chat.message', function(data) {
+            console.log(data)
+        })
+
+        /*
+        {
+            from: {
+                domain: 'evilprofessor.co.uk',
+                user: 'world'
+            },
+            content: 'Hello people!',
+            format: 'plain'
+        }
+         */
+        </code></pre>
+            
+        </section>
+        <section>
+        <h2>Presence</h2>
+        <br/>
+        <h3>Sending presence information</h3>
+            
+        <pre><code>
+        socket.emit(
+            'xmpp.presence',
+            {
+                "show": "online",
+                "status": "I'm using xmpp-ftw!",
+                "priority": 10,
+             /* "to": "megan@evilprofessor.co.uk/mobile" */
+            }
+        )
+        </code></pre>
+            
+        <br/>
+        <h3>Receiving presence data</h3>
+            
+        <pre><code>
+        socket.on('xmpp.presence', function(data) { 
+            console.log(data); 
+            /*
+             * { 
+             *   from: { domain: 'evilprofessor.co.uk', user: 'lloyd'},
+             *   show: 'away',
+             *   status: "I'm going away",
+             *   priority: 10
+             * }
+             * ...each of these are optional...
+             */
+        })
+        </code></pre>   
+        </section>
+    </section>
+    
+    <section>
+    <h1>Your turn!</h1>
+    <br/>
+    <br/>
+    <p>Some basics, then we'll start playing with XMPP</p>
     </section>
     
     <section>
         <h2>Lets get connected...</h2>
         <br/>
         <pre><code>
-&lt;script type="text/javascript" src="{ MY_IP_ADDRESS }/scripts/primus.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="{ MY_IP_ADDRESS+PORT }/scripts/primus.js"&gt;&lt;/script&gt;
 &lt;script type="text/javascript"&gt;
-    var socket = new Primus('//' + { MY_IP_ADDRESS })
+    var socket = new Primus('http://' + { MY_IP_ADDRESS+PORT })
+
     socket.on('error', function(error) { console.log(error) })
 
-    socket.on('connect', function(data) {
+    socket.on('open', function(data) {
         console.log('Connected')
-    })
-    
-    socket.on('connect.fail', function(reason) {
-        console.log("Connection failed: " + reason)
-    })
-  
-    socket.on('disconnect', function() {
-        console.log('disconnected')
-        socket = null
     })
 &lt;/script&gt;
         </code></pre>
@@ -215,11 +303,13 @@ theme: night
          { 
              "jid": "test@example.com",
              "password": "password",
-             "host": { MY_IP_ADDRESS }
+             "host": "localhost"
          }
         )
     </code></pre>
         
+    <p><small><i>'localhost'</i> as we're faking a local server domain.</small></p>
+    
     <p>...then listen for authentication event...</p>
         
     <pre><code>
@@ -287,11 +377,111 @@ theme: night
 
     <section>
     <h2>Presence</h2>
-    </section>
+    <br/>
+    <p>In order to view another user's presence you must first subscribe:</p>
         
+    <pre><code>
+    socket.emit('xmpp.presence.subscribe', { "to": "user@evilprofessor.co.uk" })
+    </code></pre>
+        
+    <p>User receives:</p>
+        
+    <pre><code>
+    socket.on('xmpp.presence.subscribe', function(data) {
+            console.log(data)
+    })
+    </code></pre>
+        
+    <p>If we want to subscribe them we reply:</p>
+        
+    <pre><code>
+    socket.emit('xmpp.presence.subscribed', { "to": "user@evilprofessor.co.uk" })
+    </code></pre>
+        
+    <br/>
+    <p>Subscriptions are <em>one way</em> you'll need to subscribe back</p>
+    </section>
+    <section>
+    <h2>Presence</h2>
+    <br/>
+    <h3>Sending presence information</h3>
+        
+    <pre><code>
+    socket.emit(
+        'xmpp.presence',
+        {
+            "show": "online",
+            "status": "I'm using xmpp-ftw!",
+            "priority": 10,
+         /* "to": "megan@evilprofessor.co.uk/mobile" */
+        }
+    )
+    </code></pre>
+        
+    <br/>
+    <h3>Receiving presence data</h3>
+        
+    <pre><code>
+    socket.on('xmpp.presence', function(data) { 
+        console.log(data); 
+        /*
+         * { 
+         *   from: { domain: 'evilprofessor.co.uk', user: 'lloyd'},
+         *   show: 'away',
+         *   status: "I'm going away",
+         *   priority: 10
+         * }
+         * ...each of these are optional...
+         */
+    })
+    </code></pre>   
+    </section>
     </section>
     
     <section>
     <h2>Publish Subscribe</h2>
+    <br/>
+    <br/>
+    <p>Lets look at the <a href="https://github.com/lloydwatkin/pubsub-message-wall">realtime message wall</a></p>
+    </section>
+    
+    <section>
+    <h2>There's lots more...</h2>
+        
+    <ul>
+      <li>MUC: Multi user chat</li>
+      <li>Roster: address book</li>
+      <li>XML RPC: run remote commands</li>
+      <li>Jingle: Multimedia sessions (webcam, files, voice, webRTC)</li>
+    </ul>
+    <br/><br/>
+    <p>There's over 300 XEPs at <a href="http://xmpp.org/xmpp-protocols/xmpp-extensions/">http://xmpp.org/xmpp-protocols/xmpp-extensions/</a></p>
+    <br/><br/>
+    <p>Anything you can hold in XML can potentially become a XEP, or you can use existing stanzas</p>
+        
+    </section>
+    <section>
+    <h2>Continue playing...</h2>
+    <div>
+        <font color="#00ff33">https://xmpp-ftw.jit.su</font>
+    </div>
+    <div>
+        <br>
+    </div>
+    <h2>Manual</h2>
+    <div>
+        <font color="#ffff00">https://xmpp-ftw.jit.su/manual</font>
+    </div>
+    <div>Presents all of the incoming/outgoing messages with example payloads</div>
+    <div><br></div>
+    <h2>Demo Client</h2>
+    <div>Purely javascript</div>
+    <div>Parses the manual and hooks on to incoming messages and gives autocomplete (with example payload) for outgoing messages
+    </div>
+    <div>
+    <font color="#ff0000">https://xmpp-ftw.jit.su/demo</font>
+    </div>
+    <br/>
+    <p><strong>Feel free to ask questions or get in touch later!</strong></p>
     </section>
 </div>
