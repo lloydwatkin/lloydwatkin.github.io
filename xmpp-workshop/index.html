@@ -50,7 +50,7 @@ theme: night
     <section>
     <h2>Think you don't use XMPP?</h2>
     <br/>
-    <p><font color="#00ccff">Google Talk</font><br/>
+    <p><font color="#00ccff">Google Hangouts (talk)</font><br/>
        <font color="#ff0000">Facebook Chat</font><br/>
        <font color="#00ff00">Android Intents</font><br/>
        <font color="#ff6600">Whatsapp</font><br/>
@@ -60,6 +60,7 @@ theme: night
     <p>Internet of things</p>
     <p>Utility companies</p>
     <p>Gaming applications</p>
+    <p>Social networks</p>
     <br/>
     <p>Many, many more places which don't advertise its usage...</p>
     </section>
@@ -82,8 +83,7 @@ theme: night
         <li>Proven (14 years old)</li>
     </ul>
     </section>
-    
-        
+
     <section>
     <h2>Where XMPP wins</h2>
     <p>At its core very simple set of functionality:</p>
@@ -114,14 +114,14 @@ theme: night
     <p>
     <font color="#ffff00">lloyd</font>@
     <font color="#0099cc">evilprofessor.co.uk</font>/
-    <font color="#00ff00">mozldn</font>
+    <font color="#00ff00">southville-js</font>
     </p>
     <br/>
 
     <ul>
       <li><font color="#ffff00">lloyd</font>: Username</li>
       <li><font color="#0099cc">evilprofessor.co.uk</font>: Domain</li>
-      <li><span style="color: rgb(0,255,0);">mozldn</span>: Resource</li>
+      <li><span style="color: rgb(0,255,0);">southville-js</span>: Resource</li>
     </ul>
     <br/><br/>
     <p>A user can be logged in from multiple resources at once (phone, desktop, laptop, tablet, etc). </p>
@@ -149,7 +149,7 @@ theme: night
 
       <p class="left">IQ:</p>
       <pre><code class="xml">
-      &lt;iq from="lloyd@evilprofessor.co.uk/boat-house" id="1"&gt;
+      &lt;iq from="lloyd@evilprofessor.co.uk/southville-js" id="1"&gt;
          &lt;query xmlns="jabber:iq:roster" /&gt;
       &lt;/iq&gt;
       </code></pre>
@@ -294,6 +294,9 @@ theme: night
     })
 &lt;/script&gt;
         </code></pre>
+        <br/>
+        <p>You'll need to serve this via HTTP. If you don't have something set up use your 
+            code from Jack's talk this morning.</p>
         
     </section>
     
