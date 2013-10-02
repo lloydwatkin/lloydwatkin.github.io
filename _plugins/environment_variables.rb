@@ -9,11 +9,18 @@ module Jekyll
       site.config['env'] = ENV['JEKYLL_ENV'] || 'development'
       # Add other environment variables to `site.config` here...
       if ('development' == site.config['env']) 
-        host = 'http://' + ENV['MY_IP']
+        host = ENV['MY_IP']
+        port = '&#58;' + ENV['XMPP_FTW_PORT'].to_s
+        prefix = 'http://'
       else
-        host = 'https://xmpp-ftw.jit.su'
+        host = 'xmpp-ftw.jit.su'
+        port = ""
+        prefix = 'https://'
       end
       site.config['host'] = host
+      site.config['port']   = port
+      site.config['prefix'] = prefix
+      puts site
     end
 
   end
