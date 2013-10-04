@@ -46,7 +46,7 @@ theme: simple
             <li>Powered by <a href="https://github.com/primus">Primus</a></li>
             </ul>
             <br/><br/>
-        <p class="left">Acts as an XMPP client (using `node-xmpp`)</p>
+        <p class="left">Acts as an XMPP client (using `<a href="https://github.com/astro/node-xmpp"><i>node-xmpp</i></a>`)</p>
         
         </section>
         
@@ -96,12 +96,86 @@ theme: simple
             <p><i class="icon-twitter"></i> <a href="https://twitter.com/lloydwatkin">@lloydwatkin</a> <i class="icon-github"></i><a href="https://github.com/lloydwatkin">lloydwatkin</a></p>
         </section>
         
+    </section>
+
+    <section>
         <section>
-           
-            <h2>Lets PubSub!</h2>
+            <h1>Lets PubSub!</h1>
             
-            <p>Head over to {{ site.prefix }}{{ site.host }}{{ site.port }}</p>
+            <br/>
+
+            <p>Head over to <a href="{{ site.prefix }}{{ site.host }}{{ site.port }}/demo">{{ site.prefix }}{{ site.host }}{{ site.port }}/demo</a></p>
         
+        </section>
+        
+        <section>
+            <h2>Login</h2>
+            <br/>
+            <p>No time for accounts, anonymous login!</p>
+            <p><strong>xmpp.login.anonymous</strong></p>
+            
+            <pre><code class="json">
+            {
+                "jid": "anon.evilprofessor.co.uk",
+                "host": "localhost"
+            }
+            </code></pre>
+            <br/>
+            <p>Tell the server we're here & listening...</p>
+            <p><strong>xmpp.presence</strong></p>
+            
+            <pre><code class="json">
+            {}
+            </code></pre>
+            <br/>
+        
+        </section>
+
+        <section>
+            <h2>Publish to a node</h2>
+            <br/>
+            <p><strong>xmpp.pubsub.publish</strong></p>
+            
+            <pre><code class="json">
+            {
+                "to": "pubsub.evilprofessor.co.uk",
+                "node": "message-wall-updates",
+                "content": "&lt;your name in lights&gt;"
+            }
+            </code></pre>
+        
+        </section>
+        
+        <section>
+            <h2>Retrieve items</h2>
+            <br/>
+            <p><strong>xmpp.pubsub.retrieve</strong></p>
+            
+            <pre><code class="json">
+            {
+                "to": "pubsub.evilprofessor.co.uk",
+                "node": "message-wall-updates"
+            }
+            </code></pre>
+        
+            <br/>
+            <p>Hint: Ctrl/Cmd + Click to enlarge results</p>
+        </section>
+
+        <section>
+            <h2>Subscribe and get push updates!</h2>
+            <br/>
+            <p><strong>xmpp.pubsub.subscribe</strong></p>
+            <pre><code class="json">
+            {
+                "to": "pubsub.evilprofessor.co.uk",
+                "node": "message-wall-updates"
+            }
+            </code></pre>
+
+            <br/>
+            <p>Items are now received via the 
+            <strong>xmpp.pubsub.push.item</strong> event</p>
         </section>
         
     </section>
