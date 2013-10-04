@@ -1,0 +1,108 @@
+---
+layout: slides
+title: 'XMPP-FTW @ Realtime Conf 2013'
+description: 'A worldwind tour around the why and how of XMPP-FTW'
+theme: simple
+---
+
+<div class="slides">
+    <section name="intro">
+        <h1>XMPP-FTW<br></h1>
+        <div>
+        <img src="./images/aardvark-14342.jpg" /><br />
+        </div>
+        <p>XMPP For The Web</p>
+    </section>
+        
+    <section name="what">
+    
+        <section name="what-title">
+        <h1>What?</h1>
+        </section>
+            
+        <section name="what-goals">
+            <blockquote>
+                <i class="icon-quote-left icon-4x pull-left icon-muted"></i>
+                The goal of XMPP-FTW is to make XMPP really simple to use for (web) developers
+            </blockquote>
+            <br/>
+
+            <ul>
+                <li>JSON-based API to XMPP</li>  
+                <li>No hand-holding</li>
+                <li>Events driven</li>
+                <li>Common sense</li>
+                <li>Good documentation</li>
+            </ul>
+        </section>
+        
+        <section name="what-tech">
+        <h1>Technology</h1>
+            
+        <p class="left">Written in nodejs</p>
+        <p class="left">Doesn't mandate a transport</p>
+            <ul>
+            <li>Demo system uses a websocket </li>
+            <li>Powered by <a href="https://github.com/primus">Primus</a></li>
+            </ul>
+            <br/><br/>
+        <p class="left">Acts as an XMPP client (using `node-xmpp`)</p>
+        
+        </section>
+        
+    </section>
+    <section>
+    <h2>XMPP-FTW</h2>
+        
+    <p>Modules...</p>
+
+    <ul>
+        <li><strong>xmpp-ftw</strong></li>
+        <li>xmpp-ftw-demo</li>
+        <li>xmpp-ftw-avatar</li>
+        <li>xmpp-ftw-buddycloud</li>
+        <li>xmpp-ftw-disco</li>
+        <li>xmpp-ftw-item-parser</li>
+        <li>xmpp-ftw-muc</li>
+        <li>xmpp-ftw-pubsub</li>
+        <li>xmpp-ftw-register</li>
+        <li>xmpp-ftw-superfeedr</li>
+        <li>xmpp-ftw-search</li>
+    </ul>
+    </section>
+    
+
+    <section>
+        
+        <section>
+        
+            <h2>Gimme, Gimme, Gimme!</h2>
+            <br/>
+            
+            <p><a href="https://xmpp-ftw.jit.su">https://xmpp-ftw.jit.su</a></p>
+            <p>Hosted for free by nodejitsu under the 
+            <a href="http://opensource.nodejitsu.com/">open source scheme</a>. 
+            Please show them some ❤.</p>
+            <br/>
+            <p>...or...</p>
+            <br/>
+            <pre style="width:60%;"><code class="javaScript">
+            npm i xmpp-ftw-demo
+            npm start
+            </code></pre>
+            
+            <p>Manual, websocket connection, demo system</p>
+        
+            <p><i class="icon-twitter"></i> <a href="https://twitter.com/lloydwatkin">@lloydwatkin</a> <i class="icon-github"></i><a href="https://github.com/lloydwatkin">lloydwatkin</a></p>
+        </section>
+        
+        <section>
+           
+            <h2>Lets PubSub!</h2>
+            
+            <p>Head over to {{ site.prefix }}{{ site.host }}{{ site.port }}</p>
+        
+        </section>
+        
+    </section>
+</div>
