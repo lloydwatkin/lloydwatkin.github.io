@@ -97,6 +97,63 @@ theme: simple
         </section>
         
     </section>
+    
+    <section name="code">
+        
+        <section name="code-title">
+        <h1>Code</h1>
+        </section>
+    
+        <section name="code-basic">
+            <h2>Getting connected</h2>
+                
+            <pre><code>
+            var socket = new Primus('{{ site.prefix }}{{ site.host }}{{ site.port }}')
+    
+            socket.on('online', function() {
+    
+                console.log('i haz websocket')
+    
+                socket.emit('xmpp.login', credentials)
+    
+                socket.on('xmpp.connection', function() {
+    
+                    // Now we can do all the things!
+    
+                })
+            })
+    
+            </code></pre>
+            
+        </section>
+        
+        <section name="code-messages">
+        <h2>Send/Receive messages</h2>
+            
+        <pre><code>
+        socket.emit(
+            'xmpp.chat.message',
+            {
+                "to": "other@evilprofessor.co.uk",
+                "content": "Hello world",
+             /* "format": "plain", */
+             /* "state": "composing" */
+            }
+        )
+
+        socket.on('xmpp.chat.message', function(data) {
+            console.log(data)
+        })
+
+        </code></pre>
+        
+        
+        </section>
+        
+        
+        </section>
+    
+    </section>
 
     <section>
         <section>
