@@ -26,11 +26,15 @@ theme: simple
                 The goal of XMPP-FTW is to make XMPP really simple to use for (web) developers
             </blockquote>
             <br/>
+        </section>
+        
+        <section name="what-ideals">
 
             <ul>
-                <li>JSON-based API to XMPP</li>  
-                <li>No hand-holding</li>
+                <li>JSON-based API to XMPP</li>
                 <li>Events driven</li>
+                <li>No client side library</li>
+                <li>No hand-holding</li>
                 <li>Common sense</li>
                 <li>Good documentation</li>
             </ul>
@@ -47,56 +51,30 @@ theme: simple
             </ul>
             <br/><br/>
         <p class="left">Acts as an XMPP client (using `<a href="https://github.com/astro/node-xmpp"><i>node-xmpp</i></a>`)</p>
-        
+        <p class="left">Can be run in the browser too</p>
         </section>
         
-    </section>
-    <section>
-    <h2>XMPP-FTW</h2>
-        
-    <p>Modules...</p>
+        <section name="what-modules">
 
-    <ul>
-        <li><strong>xmpp-ftw</strong></li>
-        <li>xmpp-ftw-demo</li>
-        <li>xmpp-ftw-avatar</li>
-        <li>xmpp-ftw-buddycloud</li>
-        <li>xmpp-ftw-disco</li>
-        <li>xmpp-ftw-item-parser</li>
-        <li>xmpp-ftw-muc</li>
-        <li>xmpp-ftw-pubsub</li>
-        <li>xmpp-ftw-register</li>
-        <li>xmpp-ftw-superfeedr</li>
-        <li>xmpp-ftw-search</li>
-    </ul>
-    </section>
+        <h2>Modules...</h2>
     
-
-    <section>
-        
-        <section>
-        
-            <h2>Gimme, Gimme, Gimme!</h2>
-            <br/>
-            
-            <p><a href="https://xmpp-ftw.jit.su">https://xmpp-ftw.jit.su</a></p>
-            <p>Hosted for free by nodejitsu under the 
-            <a href="http://opensource.nodejitsu.com/">open source scheme</a>. 
-            Please show them some ❤.</p>
-            <br/>
-            <p>...or...</p>
-            <br/>
-            <pre style="width:60%;"><code class="javaScript">
-            npm i xmpp-ftw-demo
-            npm start
-            </code></pre>
-            
-            <p>Manual, websocket connection, demo system</p>
-        
-            <p><i class="icon-twitter"></i> <a href="https://twitter.com/lloydwatkin">@lloydwatkin</a> <i class="icon-github"></i><a href="https://github.com/lloydwatkin">lloydwatkin</a></p>
+        <ul>
+            <li><strong>xmpp-ftw</strong></li>
+            <li>xmpp-ftw-demo</li>
+            <li>xmpp-ftw-avatar</li>
+            <li>xmpp-ftw-buddycloud</li>
+            <li>xmpp-ftw-disco</li>
+            <li>xmpp-ftw-item-parser</li>
+            <li>xmpp-ftw-muc</li>
+            <li>xmpp-ftw-pubsub</li>
+            <li>xmpp-ftw-register</li>
+            <li>xmpp-ftw-superfeedr</li>
+            <li>xmpp-ftw-search</li>
+            <li><em>...with more to come...</em></li>
+        </ul>
         </section>
-        
-    </section>
+            
+    </section>    
     
     <section name="code">
         
@@ -107,7 +85,7 @@ theme: simple
         <section name="code-basic">
             <h2>Getting connected</h2>
                 
-            <pre><code>
+            <pre><code class="javascript">
             var socket = new Primus('{{ site.prefix }}{{ site.host }}{{ site.port }}')
     
             socket.on('online', function() {
@@ -130,7 +108,7 @@ theme: simple
         <section name="code-messages">
         <h2>Send/Receive messages</h2>
             
-        <pre><code>
+        <pre><code class="javascript">
         socket.emit(
             'xmpp.chat.message',
             {
@@ -235,5 +213,27 @@ theme: simple
             <strong>xmpp.pubsub.push.item</strong> event</p>
         </section>
         
+    </section>
+
+    <section>
+    
+        <h2>Gimme, Gimme, Gimme!</h2>
+        <br/>
+        
+        <p><a href="https://xmpp-ftw.jit.su">https://xmpp-ftw.jit.su</a></p>
+        <p>Hosted for free by nodejitsu under the 
+        <a href="http://opensource.nodejitsu.com/">open source scheme</a>. 
+        Please show them some ❤.</p>
+        <br/>
+        <p>...or...</p>
+        <br/>
+        <pre style="width:60%;"><code class="javaScript">
+        npm i xmpp-ftw-demo
+        npm start
+        </code></pre>
+        
+        <p>Manual, websocket connection, demo system</p>
+    
+        <p><i class="icon-twitter"></i> <a href="https://twitter.com/lloydwatkin">@lloydwatkin</a> <i class="icon-github"></i><a href="https://github.com/lloydwatkin">lloydwatkin</a></p>
     </section>
 </div>
