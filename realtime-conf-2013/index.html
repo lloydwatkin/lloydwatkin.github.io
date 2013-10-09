@@ -20,6 +20,24 @@ theme: simple
         <h1>What?</h1>
         </section>
             
+        <section name="what-what">
+        <p>JSON-based API into XMPP</p>
+        <p>Uses events to fill in gaps that JSON leaves</p>
+        </section>
+    </section>
+    
+    <section name="why">
+        
+        <section data-background="#4d7e65" data-background-transition="slide">
+        <h1>Why?</h1> 
+        </section>
+        
+        <section name="what-why">
+        <p>With socket.io I could build a realtime app in 5 minutes</p>
+        <br/>
+        <p>Why couldn't I do this with XMPP?</p>    
+        </section>
+        
         <section name="what-goals">
             <blockquote>
                 <i class="icon-quote-left icon-4x pull-left icon-muted"></i>
@@ -31,22 +49,29 @@ theme: simple
         <section name="what-ideals">
 
             <ul>
-                <li>JSON-based API to XMPP</li>
-                <li>Events driven</li>
+                <li>Use a (web)socket</li>
                 <li>No client side library</li>
                 <li>No hand-holding</li>
                 <li>Common sense</li>
                 <li>Good documentation</li>
             </ul>
         </section>
-        
-        <section name="what-tech">
-        <h1>Technology</h1>
             
+    </section>    
+    
+    <section name="how">
+    
+        <section name="how-title">
+        <h1>How?</h1>
+        </section>
+    
+        <section name="what-tech">
+        <h2>Technology</h2>
+        <br/>
         <p class="left">Written in nodejs</p>
         <p class="left">Doesn't mandate a transport</p>
             <ul>
-            <li>Demo system uses a websocket </li>
+            <li>Browser == websocket</li>
             <li>Powered by <a href="https://github.com/primus">Primus</a></li>
             </ul>
             <br/><br/>
@@ -57,8 +82,8 @@ theme: simple
         <section name="what-modules">
 
         <h2>Modules...</h2>
-    
-        <ul>
+        <br/>
+        <ul style="-moz-column-count:2;-webkit-column-count:2;column-count: 2;width:90%;">
             <li><strong>xmpp-ftw</strong></li>
             <li>xmpp-ftw-demo</li>
             <li>xmpp-ftw-avatar</li>
@@ -70,11 +95,10 @@ theme: simple
             <li>xmpp-ftw-register</li>
             <li>xmpp-ftw-superfeedr</li>
             <li>xmpp-ftw-search</li>
-            <li><em>...with more to come...</em></li>
+            <li><em><a>...with more to come...</a></em></li>
         </ul>
         </section>
-            
-    </section>    
+    </section>
     
     <section name="code">
         
@@ -84,7 +108,7 @@ theme: simple
     
         <section name="code-basic">
             <h2>Getting connected</h2>
-                
+            <br/>
             <pre><code class="javascript">
             var socket = new Primus('{{ site.prefix }}{{ site.host }}{{ site.port }}')
     
@@ -107,13 +131,13 @@ theme: simple
         
         <section name="code-messages">
         <h2>Send/Receive messages</h2>
-            
+        <br/>
         <pre><code class="javascript">
         socket.emit(
             'xmpp.chat.message',
             {
                 "to": "other@evilprofessor.co.uk",
-                "content": "Hello world",
+             /* "content": "Hello world", */
              /* "format": "plain", */
              /* "state": "composing" */
             }
@@ -124,13 +148,26 @@ theme: simple
         })
 
         </code></pre>
-        
-        
         </section>
         
-        
+        <section name="code-messages">
+        <h2>Information Queries (IQs)</h2>
+        <br/>
+            
+        <pre><code class="javascript">
+        socket.emit(
+            'xmpp.area.specific',
+            {
+                "your": "payload"
+            }, 
+            function(error, data) { console.log(error, data) }
+        )
+        </code></pre>
+        <br/>
+        <p>Apply standard key names and formats across XMPP messages for 
+        convenience and familiarity</p>
         </section>
-    
+
     </section>
 
     <section>
@@ -146,12 +183,13 @@ theme: simple
         <section>
             <h2>Login</h2>
             <br/>
-            <p>No time for accounts, anonymous login!</p>
-            <p><strong>xmpp.login.anonymous</strong></p>
+            <p><strong>xmpp.login</strong></p>
             
             <pre><code class="json">
             {
-                "jid": "anon.evilprofessor.co.uk",
+                "jid": "&gt;user&lt;@evilprofessor.co.uk",
+                "password": "password",
+                "register": true,
                 "host": "localhost"
             }
             </code></pre>
@@ -175,7 +213,7 @@ theme: simple
             {
                 "to": "pubsub.evilprofessor.co.uk",
                 "node": "message-wall-updates",
-                "content": "&lt;your name in lights&gt;"
+                "content": "&lt;your name in lights?&gt;"
             }
             </code></pre>
         
@@ -213,6 +251,13 @@ theme: simple
             <strong>xmpp.pubsub.push.item</strong> event</p>
         </section>
         
+        <section>
+        <h2>What was written?</h2>
+        <br/>
+        <p>...and what did we just do?</p>
+        <p>...a web-app without a backend?</p>
+        </section>
+
     </section>
 
     <section>
@@ -221,6 +266,7 @@ theme: simple
         <br/>
         
         <p><a href="https://xmpp-ftw.jit.su">https://xmpp-ftw.jit.su</a></p>
+        <br/>
         <p>Hosted for free by nodejitsu under the 
         <a href="http://opensource.nodejitsu.com/">open source scheme</a>. 
         Please show them some ❤.</p>
@@ -230,10 +276,16 @@ theme: simple
         <pre style="width:60%;"><code class="javaScript">
         npm i xmpp-ftw-demo
         npm start
+        open http://localhost:3000
         </code></pre>
-        
-        <p>Manual, websocket connection, demo system</p>
     
-        <p><i class="icon-twitter"></i> <a href="https://twitter.com/lloydwatkin">@lloydwatkin</a> <i class="icon-github"></i><a href="https://github.com/lloydwatkin">lloydwatkin</a></p>
+        </section>
+
+        <section name="fin">
+        <p><a href="https://xmpp-ftw.jit.su">https://xmpp-ftw.jit.su</a></p>
+        <br/>
+        <p><i class="icon-twitter"></i> <a href="https://twitter.com/lloydwatkin">lloydwatkin</a></p>
+        <p><i class="icon-github"></i> <a href="https://github.com/lloydwatkin">lloydwatkin</a></p>
+        <p><i class="icon-comments-alt"></i> <a href="xmpp:lloyd@evilprofessor.co.uk">lloyd@evilprofessor.co.uk</a></p>
     </section>
 </div>
