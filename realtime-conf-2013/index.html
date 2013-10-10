@@ -79,6 +79,10 @@ theme: simple
         <p class="left">Can be run in the browser too</p>
         </section>
         
+        <section name="what-diagram">
+        <img src="images/diagram.png" class="stretch" style="border: 0; width: 95%; height: 95%;" />
+        </section>
+        
         <section name="what-modules">
 
         <h2>Modules...</h2>
@@ -151,10 +155,11 @@ theme: simple
         </code></pre>
         </section>
         
-        <section name="code-messages">
+        <section name="code-iq">
         <h2>Information Queries (IQs)</h2>
         <br/>
-            
+        <p>(Payloads where a response will be received)</p>
+        <br/>
         <pre><code class="javascript">
         socket.emit(
             'xmpp.area.specific',
@@ -167,6 +172,23 @@ theme: simple
         <br/>
         <p>Apply standard key names and formats across XMPP messages for 
         convenience and familiarity</p>
+        </section>
+        
+        <section name="code-iq-example">
+        <h2>Feature discovery</h2>
+        <br/>       
+        <pre><code class="javascript">
+        socket.emit(
+            'xmpp.discover.info',
+            {
+                "of": "evilprofessor.co.uk"
+            }, 
+            function(error, features) { 
+                console.log(error, features)
+            }
+        )
+        </code></pre>
+        
         </section>
 
     </section>
