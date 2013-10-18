@@ -11,32 +11,10 @@ theme: simple
         <div>
         <img src="./images/aardvark-14342.jpg" /><br />
         </div>
-        <p>XMPP For The Web</p>
+        <p>XMPP For The <del>Web</del> World?</p>
     </section>
         
-    <section name="what">
-    
-        <section name="what-title">
-        <h1>What?</h1>
-        </section>
-            
-        <section name="what-what">
-        <p>JSON-based API into XMPP</p>
-        <p>Uses events to fill in gaps that JSON leaves</p>
-        </section>
-    </section>
-    
     <section name="why">
-        
-        <section data-background="#4d7e65" data-background-transition="slide">
-        <h1>Why?</h1> 
-        </section>
-        
-        <section name="what-why">
-        <p>With socket.io I could build a realtime app in 5 minutes</p>
-        <br/>
-        <p>Why couldn't I do this with XMPP?</p>    
-        </section>
         
         <section name="what-goals">
             <blockquote>
@@ -51,9 +29,10 @@ theme: simple
             <ul>
                 <li>Use a (web)socket</li>
                 <li>No client side library</li>
-                <li>No hand-holding</li>
                 <li>Common sense</li>
+                <li>No hand-holding</li>
                 <li>Good documentation</li>
+                <li>Use events to fill in the 'gaps'</li>
             </ul>
         </section>
             
@@ -69,6 +48,7 @@ theme: simple
         <h2>Technology</h2>
         <br/>
         <p class="left">Written in nodejs</p>
+        <p class="left">Proxy between XMPP server + browser</p>
         <p class="left">Doesn't mandate a transport</p>
             <ul>
             <li>Browser == websocket</li>
@@ -218,14 +198,6 @@ theme: simple
                 "host": "localhost"
             }
             </code></pre>
-            <br/>
-            <p>Tell the server we're here & listening...</p>
-            <p><strong>xmpp.presence</strong></p>
-            
-            <pre><code class="json">
-            {}
-            </code></pre>
-            <br/>
         
         </section>
 
@@ -237,7 +209,7 @@ theme: simple
             <pre><code class="json">
             {
                 "to": "pubsub.evilprofessor.co.uk",
-                "node": "message-wall-updates",
+                "node": "xmpp-ftw updates",
                 "content": "&lt;your name in lights?&gt;"
             }
             </code></pre>
@@ -252,7 +224,7 @@ theme: simple
             <pre><code class="json">
             {
                 "to": "pubsub.evilprofessor.co.uk",
-                "node": "message-wall-updates"
+                "node": "xmpp-ftw updates"
             }
             </code></pre>
         
@@ -260,6 +232,18 @@ theme: simple
             <p>Hint: Ctrl/Cmd + Click to enlarge results</p>
         </section>
 
+        <section name="code-presence">
+        <h2>Presence</h2>
+            <br/>
+            <p>Tell the server we're here & listening...</p>
+            <br/>
+            <p><strong>xmpp.presence</strong></p>
+
+            <pre><code class="json">
+            {}
+            </code></pre>
+            <br/>
+        </section>
         <section>
             <h2>Subscribe and get push updates!</h2>
             <br/>
@@ -267,7 +251,7 @@ theme: simple
             <pre><code class="json">
             {
                 "to": "pubsub.evilprofessor.co.uk",
-                "node": "message-wall-updates"
+                "node": "xmpp-ftw updates"
             }
             </code></pre>
 
@@ -285,34 +269,22 @@ theme: simple
 
     </section>
 
-    <section>
-    
-        <h2>Gimme, Gimme, Gimme!</h2>
+        <section name="fin">
+        <h2>MOAR!</h2>
         <br/>
-        
-        <p><a href="https://xmpp-ftw.jit.su">https://xmpp-ftw.jit.su</a></p>
-        <br/>
-        <p>Hosted for free by nodejitsu under the 
-        <a href="http://opensource.nodejitsu.com/">open source scheme</a>. 
-        Please show them some ❤.</p>
-        <br/>
-        <p>...or...</p>
-        <br/>
-        <pre style="width:60%;"><code class="javaScript">
+        <pre>
+
         npm i xmpp-ftw-demo
         npm start
         open http://localhost:3000
-        </code></pre>
-    
-        </section>
-
-        <section name="fin">
-        <h2>Follow up...</h2>
+        </pre>
+        <br/>
+        <p>...or...</p>
         <br/>
         <p><a href="https://xmpp-ftw.jit.su">https://xmpp-ftw.jit.su</a></p>
-        <br/>
-        <p><i class="icon-github"></i> <a href="https://github.com/lloydwatkin/xmpp-ftw">lloydwatkin/xmpp-ftw</a></p>
         <br/><br/>
-        <p>XMPP-FTW: Go forth and build cool s#!t!</p>
+        <p>Hosted for free by nodejitsu under the
+        <a href="http://opensource.nodejitsu.com/">open source scheme</a>.
+        Please show them some ❤</p>
     </section>
 </div>
