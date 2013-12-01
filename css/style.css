@@ -7,6 +7,6 @@
 
 .inline { display: inline; }
 
-.xmpp-orange { color: #e96d1f; }
-.xmpp-blue { color: #29aae1; }
-.xmpp-green { color: #8bc53e; }
+section .xmpp-orange { color: #e96d1f; }
+section .xmpp-blue { color: #29aae1; }
+section .xmpp-green { color: #8bc53e; }
