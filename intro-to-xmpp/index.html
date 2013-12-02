@@ -146,11 +146,11 @@ theme: moon
             <br/>
             <h3>Give the server an idea of where you'd like data to go</h3>
             
-            <h3>Send additional data with you presence</h3>
+            <h3>Send additional data with your presence</h3>
             
             <h4 class="xmpp-orange">What features your client supports</h4>
             <h4 class="xmpp-blue">A status message</h4>
-            <h4 class="xmpp-green">What awful music you are currently singing along to</h4>
+            <h4 class="xmpp-green">Can be overloaded with additional data (not recommended, we have <abbr title="Personal Event Protocol">PEP</abbr>)</h4>
         
         </section>
         
@@ -162,7 +162,7 @@ theme: moon
     &lt;show&gt;chat&lt;/show&gt;
     &lt;priority&gt;-1&lt;/priority&gt;
     &lt;status&gt;Giving a talk&lt;/status&gt;
-&lt;presence&gt;            
+&lt;/presence&gt;            
         </pre>        
         </section>
         
@@ -190,8 +190,8 @@ theme: moon
             <pre style="font-size: 1.2em">
 &lt;message type="chat"
  to="matthew@jabber.org/laptop"&gt;
-    &lt;body&gt;Hello world&lt;/body&gt;
-&lt;message&gt;  
+    &lt;body&gt;Hello Matt&lt;/body&gt;
+&lt;/message&gt;  
             </pre>
             
             <h4 class="xmpp-orange">Messages sent to bare JID are routed by server (remember the priority "-1"?)</h4>
@@ -211,7 +211,7 @@ theme: moon
     vgreg%G% B%$t54T%$gqfg4fgAEAE
     F$£T B£%$BYQAgregOK OKo ===
     &lt;/data&gt;
-&lt;message&gt;  
+&lt;/message&gt;  
             </pre>
             
             <h4 class="xmpp-orange">Can perform discovery (DISCO) on receiver to see if they support required features</h4>
@@ -230,9 +230,9 @@ theme: moon
             <h1>Extensibility</h1>
             
             
-            <h3>XML-based</h3>
-            <h3>Gives us extensibility</h3>
-            <h3>One of few systems which properly makes use of XMLNS</h3>
+            <h3 class="xmpp-orange">XML-based</h3>
+            <h3 class="xmpp-blue">Gives us extensibility</h3>
+            <h3 class="xmpp-green">One of few systems which properly makes use of XMLNS</h3>
                         
         </section>
         
@@ -240,15 +240,61 @@ theme: moon
             <h1>Ewww XML?!</h1>
             
             <h3>Don't panic!</h3>
-            <h3>Big moves in the past 12 months to make XMPP more web/developer-friendly</h3>
+            <h3>Big moves in the past 12 months to make XMPP more web-developer friendly</h3>
 
             <ul>
-                <li>XMPP-FTW</li>
-                <li>Stanza.io</li>
-                <li>JsJAC</li>
+                <li><a href="https://xmpp-ftw.jit.su">XMPP-FTW</a></li>
+                <li><a href="https://github.com/legastero/stanza.io">Stanza.io</a></li>
+                <li><a href="https://github.com/sstrigler/jsjac">JsJAC</a></li>
             </ul>
         </section>
         
+        <section>
+            <h1>IQ</h1>
+            
+            <h3 class="xmpp-orange">Third type of stanza</h3>
+            <h3 class="xmpp-blue">Equivalent to GET/POST in HTTP (GET/SET)</h3>
+            <h3 class="xmpp-green">Always get a response (RESULT/ERROR)</h3>
+            <pre style="font-size: 1.3em;">
+&lt;iq type="get"
+  to="logger.server.org"&gt;
+    &lt;data xmlns="MY-FORMAT-NS"/&gt;
+&lt;/iq&gt;
+            </pre>
+        </section>
+        
+        <section>
+            <h1>Extensions</h1>
+            
+            <h3 class="xmpp-orange">In XMPP-land&trade; we call these <abbr title="XMPP Extension Protocol">XEP</abbr>s</h3>
+            <h3 class="xmpp-blue">Over 300 in existence and more being added</h3>
+            <h3 class="xmpp-green">Cover everything from including JSON payloads...<br/>to compressing payloads for <abbr title="Internet of things">IoT</abbr> usage</h3>
+            <br/>
+            <h4>Which in a few minutes leads us on to...</h4>
+        </section>
+        
+    </section>
+    
+    <section>
+        <h1>Summary</h1>
+        
+        <h3 class="xmpp-orange">XMPP is a powerful, proven, open, secure, standards-based protocol</h3>
+        <h3 class="xmpp-blue">Lots of servers/clients/libraries<br/>
+            (many open source)</h3>
+        <h3 class="xmpp-green">Great helpful community, who are actively helping to push the web forward:</h3>
+        <h4 class="xmpp-green">XMPP security days, WebRTC signalling over XMPP, 
+        New IoT extensions,<br/>Extensions to help accessibility</h4>
+    </section>
+    
+    <section>
+        <h1>What next?</h1>
+        
+        <h3 class="xmpp-orange">Plenty of XMPP people in the room from server developers to client builders, deploying in all kinds of environments</h3>
+        
+        <h3 class="xmpp-blue">Visit <a href="http://xmpp.org">http://xmpp.org</a></h3>
+        
+        <h3 class="xmpp-green">Join the <a href="http://mail.jabber.org/pipermail/jdev">jdev mailing list</a> + <a href="xmpp:jdev@conference.jabber.org">chat rooms</a></h3>
+
     </section>
     
     <section name="questions">
