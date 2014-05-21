@@ -38,6 +38,7 @@ theme: moon
                <p>Started in 1998 in a time of AOL IM, ICQ, Yahoo messenger</p>
                <p>Needed several accounts to talk to your friends</p>
                <p>Set of open standards documented for all to use</p>
+               <p>Becoming part of the IETF means its been highly scrutinised</p>
            </aside>
 
         </section>
@@ -63,15 +64,16 @@ theme: moon
             <br/>
             <h1>"X"</h1>
             <aside class="notes">
-            Chat, social networks (buddycloud), M2M, pubsub, IOT, building management
+            Chat, social networks (buddycloud), M2M, pubsub, IOT, building management, signalling in WebRTC
             </aside>
         </section>
         
         <section>
             <h1><span class="xmpp-orange">Why are you talking</span><br/><span class="xmpp-blue">about a crusty old</span><br/><span class="xmpp-green">protocol?</span></h1>
             <aside class="notes">
-            <p>Realtime is the next big thing</p>
             <p>Privacy/security is becoming more important to the mainstream</p>
+            <p>One of the ways to control this is through decentralisation</p>
+            <p>realtime becoming more important</p>
             <p>We've been doing this for many years, lots of experience, learned from mistakes</p>
             <p></p>
             </aside>
@@ -92,6 +94,7 @@ theme: moon
         <p class="xmpp-orange">There are three types:<br/>
             &lt;message/&gt;, &lt;presence/&gt;, &amp; &lt;iq/&gt;</p>
         <aside class="notes">
+           <p>XML streams eventually form a valid XML document</p>
            <p>Message types, 'chat', 'groupchat', 'headline'</p>
            <p>Presence - like your online status (online, busy, away, etc)</p>
            <p>IQ (information query): GET/SET,  RESULT/ERROR - like basic HTTP verbs</p>
@@ -133,51 +136,25 @@ theme: moon
             <h3 class="xmpp-green">Handles authentication and security</h3>
         
         </section> 
+             
+        <section>
+            <h1>Components</h1>
+            
+            <h3 class="xmpp-orange">Provide extended functionality</h3>
+            
+            <h3 class="xmpp-blue">Can send messages on behalf of clients</h3>
+            <h3 class="xmpp-green">Server + language agnostic</h3>
+        
+        </section> 
     
-    </section>
-        
-    <section>
-        <section>
-        <h1>Why <span class="xmpp-green">XMPP</span> with <span class="xmpp-orange">WebRTC</span>?</h1>
-        <aside class="notes">
-        No signalling in webRTC<br/>
-        "Meet me" URLs mean they control what you can/can't do<br/>
-        The features you use are determined by them<br/>
-        What happens if a contact won't use a certain system? (e.g. for privacy concerns?)
-        </aside>
-        </section>
-        
-        <section>
-            <h1>But I can write my own signaling?!</h1>
-            <aside class="notes">
-            Sure you can, its not hard<br/>
-            You become another "meet me" system<br/>
-            How will you interoperate with others?<br/>
-            </aside>
-        </section>
-        
-        <section>
-            <h1><span class="xmpp-blue">XMPP</span> has <span class="xmpp-orange">many</span> <span class="xmpp-green">other advantages</span></h1>    
-        </section>
-        
-        <section>
-            <h3 class="xmpp-green">✓ 1-to-1 and multi-user chat</h3>
-            <h3 class="xmpp-orange">✓ presence (online status)</h3>
-            <h3 class="xmpp-blue">✓ roster (address book)</h3>
-            <h3 class="xmpp-green">✓ publish subscribe</h3>
-            <h3 class="xmpp-orange">✓ federation (multi-server communications)</h3>
-            <h3 class="xmpp-blue">✓ security</h3>
-            <h3 class="xmpp-green">✓ authentication</h3>
-            <h3 class="xmpp-orange">✓ large, helpful community</h3>
-            <h3 class="xmpp-blue">✓ well thought-out standards</h3>
-        </section>
-        
     </section>
     
     <section>
         
         <section>
-            <h1>XMPP on the web</h1>
+            <h1>Building applications with XMPP</h1>
+            <br/>
+            <h3 class="xmpp-green">...<em>web-based</em> of course</h3>
         </section>
         
         <section>
@@ -189,7 +166,7 @@ theme: moon
         
         <section>
 
-            <h3>Big moves in the past 14 months to make XMPP more web-developer friendly</h3>
+            <h3>...in the last couple of years we've attempted to make XMPP more web-developer friendly</h3>
 
             <ul>
                 <li><a href="https://xmpp-ftw.jit.su" class="xmpp-green">XMPP-FTW</a></li>
@@ -199,13 +176,6 @@ theme: moon
             </ul>
             <br/><br/>
             <h3>There's also <a href="http://strophe.im/strophejs/">Strophe.js</a> and <a href="http://node-xmpp.github.io/doc/nodexmppclient.html">node-xmpp-client</a></h3>
-            
-        </section>
-        
-        <section>
-            <h3>Here's interoperable demo clients from all those projects:</h3>
-            
-            <h2><a class="xmpp-green" href="http://legastero.github.io/jingle-interop-demos/">legastero.github.io/jingle-interop-demos/</a></h2>
             
         </section>
         
@@ -222,18 +192,55 @@ theme: moon
             <li class="xmpp-green">Event-based system</li>
             <li class="xmpp-orange">Translates between XML and JSON</li>
             <li class="xmpp-blue">Written in nodejs</li>
-            <li class="xmpp-green">Demo system generated from the manual</li>
-            <li class="xmpp-orange">Attempts to make building XMPP apps quick and easy<br/>(I built it for one of my projects)</li>
-            <li class="xmpp-blue">Quick demo</li>
+            <li class="xmpp-orange">Attempts to make building XMPP</li>
             </ul>
         </section>
         
     </section>
+    <section>
+        <section>
+            <h1>What can I build???</h1>
+        </section>
+
+        <section>
+            <h1>You can build <span class="xmpp-orange">many</span> applications with <span class="xmpp-green">basic XMPP</span> functionality</h1>
+
+            <aside class="notes">
+            <p>Chat applications</p>
+            <p>Just because chat means "words" to us, it doesn't mean your application can't pass 'data' in chat</p>
+            <p>Video conferencing solutions</p>
+            <p>Many applications are just publish subscribe, so we have that</p>
+            </aside>
+        </section>
     
+        
+        <section>
+            <h1><span class="xmpp-blue">XMPP</span> has <span class="xmpp-orange">many</span> <span class="xmpp-green">other advantages</span></h1>    
+        </section>
+                
+        <section>
+            <h3 class="xmpp-green">✓ 1-to-1 and multi-user chat</h3>
+            <h3 class="xmpp-orange">✓ presence (online status)</h3>
+            <h3 class="xmpp-blue">✓ roster (address book)</h3>
+            <h3 class="xmpp-green">✓ publish subscribe</h3>
+            <h3 class="xmpp-orange">✓ federation (multi-server communications)</h3>
+            <h3 class="xmpp-blue">✓ security</h3>
+            <h3 class="xmpp-green">✓ authentication</h3>
+            <h3 class="xmpp-orange">✓ large, helpful community</h3>
+            <h3 class="xmpp-blue">✓ well thought-out standards</h3>
+        </section>
+        
+        <section>
+            <h3>Here's some interoperable webrtc demo clients from different projects:</h3>
+            
+            <h2><a class="xmpp-green" href="http://legastero.github.io/jingle-interop-demos/">legastero.github.io/jingle-interop-demos/</a></h2>
+            
+        </section>
+    </section>
     <section>
         <h1>Summary</h1>
         
-        <h3 class="xmpp-orange">XMPP is a powerful, proven, open, secure, standards-based protocol</h3><h4 class="xmpp-orange">...great match for WebRTC applications</h4><br/>
+        <h3 class="xmpp-orange">XMPP is a powerful, proven, open, secure, standards-based protocol</h3><h4 class="xmpp-orange">...great match for decentralized applications</h4><br/>
         <h3 class="xmpp-blue">Lots of servers/clients/libraries<br/>
             (many open source)</h3><br/>
         <h3 class="xmpp-green">Great helpful community, who are actively helping to push the web forward:</h3>
@@ -245,8 +252,8 @@ theme: moon
     
         <h1 class="fa icon-question"> Questions</h1>
         <br/>
-        <h3>Slides available @ <a href="http://talks.evilprofessor.co.uk/decentcamp-2014-building-xmpp-applications">http://talks.evilprofessor.co.uk/decentcamp-2014-building-xmpp-applications</a></h3>
-        <h3>Get an XMPP account quickly: <a href="https://demo.buddycloud.org">demo.buddycloud.org</a></h3>        
+        <h3>Slides available @ <a href="https://bit.ly/decentralize-xmpp">https://bit.ly/decentralize-xmpp</a></h3>
+        <h3>Get an XMPP account quickly: <a href="https://hosting.buddycloud.com">hosting.buddycloud.com</a></h3>        
     </section>
         
 </div>
