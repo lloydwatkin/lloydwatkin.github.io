@@ -32,16 +32,7 @@
     
     <link rel="stylesheet" href="/vendor/fa/css/font-awesome.min.css" />
     <link rel="stylesheet" href="/css/style.css" />
-</head>
-
-<body>
-
- <div class="reveal">
-  <!-- Any section element inside of this container is displayed as a slide -->
- {{ content }}
- </div>
-
- <script src="../lib/js/head.min.js"></script>
+<script src="../lib/js/head.min.js"></script>
  <script src="../js/reveal.min.js"></script>
 
  <script>
@@ -96,7 +87,17 @@
 			]
             {{ page.extraOptions }}
 		})
-	</script>
+	</script>    
+</head>
+
+<body>
+
+ <div class="reveal">
+  <!-- Any section element inside of this container is displayed as a slide -->
+ {{ content }}
+ </div>
+
+ 
 {% include analytics.html %}
 </body>
 </html>
