@@ -5,17 +5,112 @@ description: 'Building silo-free realtime web-based applications using XMPP'
 theme: simple
 ---
 
+<style>
+.silo-bg body {
+    background-image: url('/nodeconf-london-oneshot/images/silo.jpg');
+    background-size: cover;
+}
+.silo-bg body h1, .children-bg body h1 {
+    background-color: rgba(255,255,255,0.7);
+    padding: 10px 0 50px 0;
+}
+    
+.silo-bg body h2 {
+    background-color: rgba(255,255,255,0.7);
+    padding: 5px 0 20px 0;
+}
+.children-bg body {
+    background-image: url('/nodeconf-london-oneshot/images/think-of-the-children.jpg');
+    background-size: cover;
+}
+</style>
 <div class="slides">
     
-    <section data-background="images/silo.jpg">
+    <section data-state="silo-bg">
         <h1>Silo free realtime applications</h1>
+        <h2><a href="https://twitter.com/lloydwatkin">@lloydwatkin</a></h2>
     </section>
-    <section name="intro">
+    <section>
         over 90% of the world’s email moves through just 10 providers
     </section>
     
+    <section>
+        <section data-state="children-bg">
+        <h1>Why aren't we decentralized?</h1>
+        </section>
+        
+        <section>
+            <h2>Decentralized is 10x harder</h2>
+            <h2>Decentralized is less profitable</h2>
+            <h2>Decentralized is slower</h2>
+            <aside class="notes">
+            <ul>
+                <li>Ulimately you won't be running the software</li>
+                <li>You need to be tolerant of environment, old versions</li>
+                <li>This isn't a problem in a centralized environment</li>
+                <li>You can't/its hard to mine user data for "free" applications</li>
+                <li>You can't show someone adverts on their own systems</li>
+                <li>Retrieving data from a remote systems is slower</li>
+            </ul>
+            </aside>
+        </section>
+    </section>
+    <section>
+        <section>
+            <h1>Working with XMPP in nodejs</h1>
+            <aside class="notes">
+            <ul>
+            <li>nodejs very appropriate tool for XMPP</li>
+            <li>asynchronus / evented / streams all very useful</li>
+            </ul>
+            </aside>
+        </section>
+        <section>
+            <h1><a href="http://node-xmpp.github.io/doc/nodexmppclient.html">node-xmpp-client</a></h1>
+            <pre class="javascript"><code>
+            var Client = require('node-xmpp-client')
+            var client = new Client({ /* options */ })
+            
+            client.on('online', console.log.bind)
+            client.on('stanza', function(stanza) {
+                stanza.attrs.to = stanza.attrs.to
+                delete stanza.attrs.from
+                client.send(stanza)
+            })
+            </code></pre>
+            <aside class="notes">
+            <ul>
+               <li>Create a client connection</li>
+               <li>Can also be used from a browser (BOSH, websocket)</li>
+               <li>Build chat bots, implement custom logic in a client</li>
+            </ul>
+            </aside>
+        </section>
+        <section>
+                <h1><a href="https://github.com/node-xmpp/node-xmpp-component">node-xmpp-component</a></h1>
+                <ul>
+                    <li>Build components</li>
+                    <li>Implement your own business logic</li>
+                    <li>Send messages as local users</li>
+                </ul>
+                <aside class="notes">
+                <ul>
+                    <li>Components exist on a subdomain of the XMPP server</li>
+                    <li>Implement your own custom business logic</li>
+                    <li>You can send stanzas as local users</li>
+                    <li>Transferrable to any XMPP server you decide to use</li>
+                </ul>
+                </aside>
+        </section>
+        <section>
+                <h1><a href="https://github.com/node-xmpp/node-xmpp-server">node-xmpp-server</a></h1>
+        </section>
+        <section>
+            <h1><a href="https://xmpp-ftw.jit.su">XMPP-FTW</a></h1>
+        </section>
+    </section>
     
-    <section name="closing">
+    <section>
         <section>
         <h1>♫ HEY ♫</h1>
         <h2>I just met you...</h2>
@@ -32,5 +127,6 @@ theme: simple
         <h2>♫ ..but here's my JID... ♫</h2><br/>
         <h2><strong>lloyd@evilprofessor.co.uk</strong></h2><br/>
         <h2>♫ I.M. me maybe ♫</h2>
+        </section>
     </section>
 </div>
