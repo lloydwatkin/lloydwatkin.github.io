@@ -10,18 +10,35 @@ theme: simple
     background-image: url('/nodeconf-london-oneshot/images/silo.jpg');
     background-size: cover;
 }
-.silo-bg body h1, .children-bg body h1 {
+.silo-bg body h1, .children-bg body h1, .why-bg body h1, .internet-bg body h1, .xmpp-bg body h1 {
     background-color: rgba(255,255,255,0.7);
     padding: 10px 0 50px 0;
 }
     
-.silo-bg body h2 {
+.silo-bg body h2, .internet-bg body h2 {
     background-color: rgba(255,255,255,0.7);
     padding: 5px 0 20px 0;
 }
 .children-bg body {
     background-image: url('/nodeconf-london-oneshot/images/think-of-the-children.jpg');
     background-size: cover;
+}
+.why-bg body {
+    background-image: url('/nodeconf-london-oneshot/images/banksy.jpg');
+    background-size: contain;
+}
+.xmpp-bg body {
+    background-image: url('/nodeconf-london-oneshot/images/xmpp.png');
+    background-size: contain;
+}
+.internet-bg body {
+    background-image: url('/nodeconf-london-oneshot/images/the-internet.jpg');
+    background-size: contain;
+}
+h1.reverse-text {
+    color: #ffffff;
+    background-color: #000000;
+    padding-bottom: 40px;
 }
 </style>
 <div class="slides">
@@ -30,8 +47,86 @@ theme: simple
         <h1>Silo free realtime applications</h1>
         <h2><a href="https://twitter.com/lloydwatkin">@lloydwatkin</a></h2>
     </section>
+    
     <section>
-        over 90% of the world’s email moves through just 10 providers
+        <section data-state="why-bg">
+        <h1>Why decentralized?</h1>
+        </section>
+        <section>
+            <h2>Privacy</h2>
+            <h2>Security</h2>
+            <aside class="notes">
+            <ul>
+               <li>Many roll eyes</li>
+               <li>Targeted adverts are fine for "free" stuff</li>
+               <li>...and I see where you are coming from</li>
+               <li>So lets look at some other things</li>
+            </ul>
+            </aside>
+        </section>
+        <section>
+            <h1>Publishing</h1>
+            <aside class="notes">
+            <ul>
+                <li>The great thing about the internet is that everyone is a publisher and the WWW + HTML has allowed for that</li>
+                <li>But what happens when systems go away?</li>
+                <li>e.g. geocities - a great loss (thankfully archived) of human thought http://archiveteam.org/index.php?title=GeoCities</li>
+                <li>Kyle Drake's Neocities - website about hating carpets - what if this person goes on to invent time travel?</li>
+                <li>Its a large historical archive - what is worthless today may be priceless in future - e.g. Egyptian worker grafitti</li>
+                <li>What happens when a company gets bought up and your site no longer matches their terms?</li>
+            </ul>
+            </aside>
+        </section>
+        <section>
+            <h1>Social Networking</h1>
+            <aside class="notes">
+            <ul>
+                <li>Like many of you, I use a certain social network</li>
+                <li>I put my memories on there talk about, and share, experiences - we share an awful lot about ourselves</li>
+                <li>What happens when that social network goes away? Or decides to trim its database?</li>
+                <li>Treasured memories will be lost - relationships, friends, family, pets, children</li>
+                <li>Sure maybe you can export your data, but you'll never get it in the same form</li>
+                <li>Worse still what if they decided to censor posts on certain topics (e.g. Palestine) or 
+                decided to experiment with its users on a psychological level? http://www.theguardian.com/technology/2014/jun/29/facebook-users-emotions-news-feeds</li>
+            </ul>
+            </aside>
+        </section>
+        <section>
+            <h1>The mega-silos</h1>
+            <br/>
+            <ul>
+                <li>The sad fact is that the "mega silos" can control the internet through their sheer size</li>
+                <li>If EvilCorp decided to build a custom browser, charge for it, stop it working on other browsers unless licences were paid</li>
+                <li>Compare with Firefox needing to support flawed DRM systems or be left behind</li>
+            </ul>
+        </section>
+        <section>
+            <h1 class="reverse-text">&gt;90% of all email goes through the top 10 providers</h1>
+            <aside class="notes">
+            <ul>
+            <li>July 2014 technology radar - http://www.thoughtworks.com/radar/#/</li>
+            <li>...and...?</li>
+            <li>What if provider "A" decided to replace IMAP?</li>
+            <li>Every system involving email, now has to support this new protocol</li>
+            <li>Writing systems becomes more expensive, more error prone</li>
+            <li>Each time the new API is updated new code has to be written, systems have to be updated</li>
+            <li>What happens if they then only allow internal email (compuserve &amp; AOL of the past)</li>
+            <li>Its a mess!</li>
+            </ul>
+            </aside>
+        </section>
+        <section data-state="internet-bg">
+            <h1>Decentralization is key to a free and open internet</h1>
+            <aside class="notes">
+            <ul>
+                <li>Free to innovate</li>
+                <li>Free to share</li>
+                <li>Free of barriers both geographical and financial</li>
+                <li>Two key components DNS and email are decentralized</li>
+                <li>Have been around for 30+ years</li>
+            </ul>
+            </aside>
+        </section>
     </section>
     
     <section>
@@ -54,6 +149,50 @@ theme: simple
             </ul>
             </aside>
         </section>
+    </section>
+    <section>
+        <section data-state="xmpp-bg">
+        <h1>XMPP</h1>
+        <aside class="notes">
+        <ul>
+        <li>eXtensible Messaging and Presence Protocol (aka Jabber)</li>
+        <li>Started in 1998, at a time of ICQ, AOLIM, Y! Messenger</li>
+        <li>Lots of different accounts</li>
+        <li>Part of the IETF</li>
+        <li>Set of standards documented for all to use</li>
+        </ul>
+        </aside>
+        </section>
+        <section>
+        <h2>Standards? Yawn!</h2><br/>
+        <blockquote>"When they succeed, they dramatically lower the cost of creating something." TBL</blockquote>
+        <aside class="notes">
+        When developing new software, e.g. to deliver content, thanks to HTTP no one needs to develop methods of achieving this    
+        </aside>
+        </section>
+        <section>
+            <h1>Does anyone use it?</h1>
+            <ul>
+                <li>Google: GCM</li>
+                <li>Facebook: Chat interface</li>
+                <li>Whatsapp: Hacked version</li>
+                <li>Atlassian: HipChat</li>
+            </ul>
+            <p>ITS USAGE IS OFTEN NOT ADVERTISED</p>
+            <aside class="notes">
+            Banking, military
+            </aside>
+        </section>
+        <section>
+            <h1>What is it used for?</h1>
+            <ul>
+            <li>Chat applications - duh!</li>
+            <li>Publish-subscribe systems - push!</li>
+            <li>Social networks</li>
+            <li>Internet of Things</li>
+            <li>Secure messaging</li>
+            <li>Signalling for WebRTC</li>
+            </ul>
     </section>
     <section>
         <section>
