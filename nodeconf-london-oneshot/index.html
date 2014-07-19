@@ -15,7 +15,7 @@ theme: simple
     padding: 10px 0 50px 0;
 }
     
-.silo-bg body h2, .internet-bg body h2 {
+.silo-bg body h2, .internet-bg body h2, .buddycloud-bg body h2, .git-bg body h2 {
     background-color: rgba(255,255,255,0.7);
     padding: 5px 0 20px 0;
 }
@@ -35,6 +35,18 @@ theme: simple
     background-image: url('/nodeconf-london-oneshot/images/the-internet.jpg');
     background-size: contain;
 }
+.whatif-bg body {
+    background-image: url('/nodeconf-london-oneshot/images/what-if.jpg');
+    background-size: contain;
+}
+.buddycloud-bg body {
+    background-image: url('/nodeconf-london-oneshot/images/buddycloud.png');
+    background-size: contain;
+}
+.git-bg body {
+    background-image: url('/nodeconf-london-oneshot/images/git.jpg');
+    background-size: contain;
+}
 h1.reverse-text {
     color: #ffffff;
     background-color: #000000;
@@ -44,100 +56,29 @@ h1.reverse-text {
 <div class="slides">
     
     <section data-state="silo-bg">
-        <h1>Silo free realtime applications</h1>
+        <h1>Silo-free federated realtime applications</h1>
         <h2><a href="https://twitter.com/lloydwatkin">@lloydwatkin</a></h2>
     </section>
     
     <section>
-        <section data-state="why-bg">
-        <h1>Why decentralized?</h1>
+        
+        <section>
+        <h1>Why silo-free applications?</h1>
         </section>
         <section>
-            <h2>Privacy</h2>
-            <h2>Security</h2>
-            <aside class="notes">
-            <ul>
-               <li>Many roll eyes</li>
-               <li>Targeted adverts are fine for "free" stuff</li>
-               <li>...and I see where you are coming from</li>
-               <li>So lets look at some other things</li>
-            </ul>
-            </aside>
+        <h1>Why federated applications?</h1>
         </section>
-        <section>
-            <h1>Publishing</h1>
-            <aside class="notes">
-            <ul>
-                <li>The great thing about the internet is that everyone is a publisher and the WWW + HTML has allowed for that</li>
-                <li>But what happens when systems go away?</li>
-                <li>e.g. geocities - a great loss (thankfully archived) of human thought http://archiveteam.org/index.php?title=GeoCities</li>
-                <li>Kyle Drake's Neocities - website about hating carpets - what if this person goes on to invent time travel?</li>
-                <li>Its a large historical archive - what is worthless today may be priceless in future - e.g. Egyptian worker grafitti</li>
-                <li>What happens when a company gets bought up and your site no longer matches their terms?</li>
-            </ul>
-            </aside>
-        </section>
-        <section>
-            <h1>Social Networking</h1>
-            <aside class="notes">
-            <ul>
-                <li>Like many of you, I use a certain social network</li>
-                <li>I put my memories on there talk about, and share, experiences - we share an awful lot about ourselves</li>
-                <li>What happens when that social network goes away? Or decides to trim its database?</li>
-                <li>Treasured memories will be lost - relationships, friends, family, pets, children</li>
-                <li>Sure maybe you can export your data, but you'll never get it in the same form</li>
-                <li>Worse still what if they decided to censor posts on certain topics (e.g. Palestine) or 
-                decided to experiment with its users on a psychological level? http://www.theguardian.com/technology/2014/jun/29/facebook-users-emotions-news-feeds</li>
-            </ul>
-            </aside>
-        </section>
-        <section>
-            <h1>The mega-silos</h1>
-            <br/>
-            <ul>
-                <li>The sad fact is that the "mega silos" can control the internet through their sheer size</li>
-                <li>If EvilCorp decided to build a custom browser, charge for it, stop it working on other browsers unless licences were paid</li>
-                <li>Compare with Firefox needing to support flawed DRM systems or be left behind</li>
-            </ul>
-        </section>
-        <section>
-            <h1 class="reverse-text">&gt;90% of all email goes through the top 10 providers</h1>
-            <aside class="notes">
-            <ul>
-            <li>July 2014 technology radar - http://www.thoughtworks.com/radar/#/</li>
-            <li>...and...?</li>
-            <li>What if provider "A" decided to replace IMAP?</li>
-            <li>Every system involving email, now has to support this new protocol</li>
-            <li>Writing systems becomes more expensive, more error prone</li>
-            <li>Each time the new API is updated new code has to be written, systems have to be updated</li>
-            <li>What happens if they then only allow internal email (compuserve &amp; AOL of the past)</li>
-            <li>Its a mess!</li>
-            </ul>
-            </aside>
-        </section>
-        <section data-state="internet-bg">
-            <h1>Decentralization is key to a free and open internet</h1>
-            <aside class="notes">
-            <ul>
-                <li>Free to innovate</li>
-                <li>Free to share</li>
-                <li>Free of barriers both geographical and financial</li>
-                <li>Two key components DNS and email are decentralized</li>
-                <li>Have been around for 30+ years</li>
-            </ul>
-            </aside>
-        </section>
-    </section>
     
+    </section>
+        
     <section>
-        <section data-state="children-bg">
-        <h1>Why aren't we decentralized?</h1>
+        <section>
+        <h1>Why don't we see more of these?</h1>
         </section>
         
         <section>
-            <h2>Decentralized is 10x harder</h2>
-            <h2>Decentralized is less profitable</h2>
-            <h2>Decentralized is slower</h2>
+            <h2>Its hard!</h2>
+            <h2>Companies often lean on these technologies, grow big, make their apis properietary</h2>
             <aside class="notes">
             <ul>
                 <li>Ulimately you won't be running the software</li>
@@ -171,20 +112,20 @@ h1.reverse-text {
         </aside>
         </section>
         <section>
-            <h1>Does anyone use it?</h1>
+            <h2>Does anyone use it?</h2><br/>
             <ul>
                 <li>Google: GCM</li>
                 <li>Facebook: Chat interface</li>
                 <li>Whatsapp: Hacked version</li>
                 <li>Atlassian: HipChat</li>
-            </ul>
-            <p>ITS USAGE IS OFTEN NOT ADVERTISED</p>
+            </ul><br/><br/>
+            <h2>Its usage isn't often advertised</h2>
             <aside class="notes">
             Banking, military
             </aside>
         </section>
         <section>
-            <h1>What is it used for?</h1>
+            <h2>What is it used for?</h2><br/>
             <ul>
             <li>Chat applications - duh!</li>
             <li>Publish-subscribe systems - push!</li>
@@ -193,7 +134,77 @@ h1.reverse-text {
             <li>Secure messaging</li>
             <li>Signalling for WebRTC</li>
             </ul>
+        </section>
     </section>
+    
+<section name="fundamentals">
+        
+        <section name="fundamentals-title>">
+        <h1>Fundamentals</h1>
+        </section>
+        
+        <section name="fundamental-stanzas">
+        <h1 class="xmpp-blue">Stanzas</h1>
+        <h3 class="xmpp-green">...are snippets of XML</h3>
+        <br/>
+        <p class="xmpp-orange">There are three types:<br/>
+            &lt;message/&gt;, &lt;presence/&gt;, &amp; &lt;iq/&gt;</p>
+        <aside class="notes">
+           <p>XML streams eventually form a valid XML document</p>
+           <p>Message types, 'chat', 'groupchat', 'headline'</p>
+           <p>Presence - like your online status (online, busy, away, etc)</p>
+           <p>IQ (information query): GET/SET,  RESULT/ERROR - like basic HTTP verbs</p>
+       </aside>
+        </section>
+
+         <section>
+            <h2>The <abbr title="Jabber ID">JID</abbr></h2>
+            <br/>
+            <h3>[<span class="xmpp-orange">user</span>@] <span class="xmpp-blue">example.org</span> [/<span class="xmpp-green">mobile-phone</span>]</h3>
+            <br/>
+            
+            <ul>
+                <li><span class="xmpp-orange">local</span>: The user/device (i.e. client)</li>
+                <li><span class="xmpp-blue">domain</span>: Server you are addressing</li>
+                <li><span class="xmpp-green">resource</span>: Multiple connections?</li>
+            </ul>
+            <aside class="notes">
+            <h3>Always designed with multiple devices in mind</h3>
+            <h3>Each device has a priority - route to the most 'available'</h3>
+        </section>
+        
+        <section>
+            
+            <h1>Clients</h1><br/>
+            
+            <h3 class="xmpp-orange">Thin clients, leave the work to the server</h3>
+            <h3 class="xmpp-blue">Connect over TCP/BOSH (Long polling)/WebSockets</h3>
+            <h3 class="xmpp-green">Data is pushed to clients, clients push data</h3>
+        
+        </section>
+             
+        <section>
+            
+            <h1>Servers</h1><br/>
+            
+            <h3 class="xmpp-orange">Routes messages</h3>
+            <h3 class="xmpp-blue">Allow users to talk across servers</h3>
+            <h3 class="xmpp-green">Handles authentication and security</h3>
+        
+        </section> 
+             
+        <section>
+            <h1>Components</h1><br/>
+            
+            <h3 class="xmpp-orange">Provide extended functionality</h3>
+            
+            <h3 class="xmpp-blue">Can send messages on behalf of clients</h3>
+            <h3 class="xmpp-green">Server + language agnostic</h3>
+        
+        </section> 
+    
+    </section>
+    
     <section>
         <section>
             <h1>Working with XMPP in nodejs</h1>
@@ -205,7 +216,7 @@ h1.reverse-text {
             </aside>
         </section>
         <section>
-            <h1><a href="http://node-xmpp.github.io/doc/nodexmppclient.html">node-xmpp-client</a></h1>
+            <h1><a href="http://node-xmpp.github.io/doc/nodexmppclient.html">node-xmpp-client</a></h1><br/>
             <pre class="javascript"><code>
             var Client = require('node-xmpp-client')
             var client = new Client({ /* options */ })
@@ -226,7 +237,7 @@ h1.reverse-text {
             </aside>
         </section>
         <section>
-                <h1><a href="https://github.com/node-xmpp/node-xmpp-component">node-xmpp-component</a></h1>
+                <h2><a href="https://github.com/node-xmpp/node-xmpp-component">node-xmpp-component</a></h2><br/>
                 <ul>
                     <li>Build components</li>
                     <li>Implement your own business logic</li>
@@ -242,17 +253,44 @@ h1.reverse-text {
                 </aside>
         </section>
         <section>
-                <h1><a href="https://github.com/node-xmpp/node-xmpp-server">node-xmpp-server</a></h1>
+                <h2><a href="https://github.com/node-xmpp/node-xmpp-server">node-xmpp-server</a></h2><br/>
+                <h3>Not ready as a full XMPP server, but you can start up and connect clients to handle job management and messaging</h3>
         </section>
         <section>
-            <h1><a href="https://xmpp-ftw.jit.su">XMPP-FTW</a></h1>
+            <h1><a href="https://xmpp-ftw.jit.su">XMPP-FTW</a></h1><br/>
+            
+            <h2>Powerful XMPP; Simple JSON</h2>
+            <aside class="notes">
+            <ul>
+            <li>Designed to be a client side library</li>
+            <li>Translates messages back and fore between XML and JSON</li>
+            <li>Evented</li>
+            <li>But perfectly useable purely server side to make building federated applications *really* simple</li>
+            </ul>
+            </aside>
         </section>
     </section>
     
     <section>
+        <section data-state="whatif-bg">
+            &nbsp;
+        </section>
+        
+        <section data-state="buddycloud-bg">
+            <h2>...we built a social network where users control their data, never fearing about it going away?</h2>
+        </section>
+        
+        <section data-state="git-bg">
+            <h2>...we built git hosting where I fork to my own server so whatever asshat is attacking github doesn't stop us all from coding?</h2>
+        </section>
+    
+    
+    </section>
+    
+    <section>
         <section>
-        <h1>♫ HEY ♫</h1>
-        <h2>I just met you...</h2>
+        <h1 class="xmpp-green">♫ HEY ♫</h1>
+        <h2 class="xmpp-blue">I just met you...</h2>
         <aside class="notes">
         ...finally...
         I'd like to offer anyone help trying to build this sort of application
@@ -260,12 +298,19 @@ h1.reverse-text {
         </aside>
         </section>
         <section>
-        <h1>...and this is crazy...</h1>
+        <h1 class="xmpp-orange">...and this is crazy...</h1>
         </section>
         <section>
-        <h2>♫ ..but here's my JID... ♫</h2><br/>
-        <h2><strong>lloyd@evilprofessor.co.uk</strong></h2><br/>
-        <h2>♫ I.M. me maybe ♫</h2>
+        <h2 class="xmpp-green">♫ ..but here's my JID... ♫</h2><br/>
+        <h2 class="xmpp-blue"><strong>lloyd@evilprofessor.co.uk</strong></h2><br/>
+        <h2 class="xmpp-orange">♫ I.M. me maybe ♫</h2>
         </section>
+    </section>
+    
+    <section name="questions">
+
+        <h3>Slides available @ <a href="http://talks.evilprofessor.co.uk/nodeconf-london-oneshot/">http://talks.evilprofessor.co.uk/nodeconf-london-oneshot/</a></h3><br/>
+        <h3>Get your own federated social network like *so* fast:<br/><a href="https://hosting.buddycloud.com">hosting.buddycloud.com</a></h3><br/>
+        <h3>@lloydwatkin</h3>
     </section>
 </div>
