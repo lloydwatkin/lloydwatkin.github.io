@@ -53,7 +53,7 @@
 			history : true,
 			center : true,
 
-			theme : Reveal.getQueryHash().theme, // available themes are in /css/theme
+			theme : "{{ page.theme }}" || Reveal.getQueryHash().theme, // available themes are in /css/theme
 			transition : Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
 
 			// Optional libraries used to extend on reveal.js
@@ -91,8 +91,6 @@
 					return !!document.body.classList;
 				}
 			}
-			// { src: '../plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
-			// { src: '../plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
 			]
             {{ page.extraOptions }}
 		})

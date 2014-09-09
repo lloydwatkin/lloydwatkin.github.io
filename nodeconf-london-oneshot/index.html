@@ -1,0 +1,460 @@
+---
+layout: slides
+title: 'Building silo-free realtime applications'
+description: 'Building silo-free realtime web-based applications using XMPP'
+theme: simple
+---
+
+<style>
+.silo-bg body {
+    background-image: url('/nodeconf-london-oneshot/images/silo.jpg');
+    background-size: cover;
+}
+.silo-bg body h1, .children-bg body h1, .why-bg body h1, .internet-bg body h1, .xmpp-bg body h1 {
+    background-color: rgba(255,255,255,0.7);
+    padding: 10px 0 50px 0;
+}
+    
+.silo-bg body h2, .internet-bg body h2, .buddycloud-bg body h2, .git-bg body h2 {
+    background-color: rgba(255,255,255,0.7);
+    padding: 5px 0 20px 0;
+}
+.children-bg body {
+    background-image: url('/nodeconf-london-oneshot/images/think-of-the-children.jpg');
+    background-size: cover;
+}
+.why-bg body {
+    background-image: url('/nodeconf-london-oneshot/images/banksy.jpg');
+    background-size: contain;
+}
+.xmpp-bg body {
+    background-image: url('/nodeconf-london-oneshot/images/xmpp.png');
+    background-size: contain;
+}
+.internet-bg body {
+    background-image: url('/nodeconf-london-oneshot/images/the-internet.jpg');
+    background-size: contain;
+}
+.whatif-bg body {
+    background-image: url('/nodeconf-london-oneshot/images/what-if.jpg');
+    background-size: contain;
+}
+.buddycloud-bg body {
+    background-image: url('/nodeconf-london-oneshot/images/buddycloud.png');
+    background-size: contain;
+}
+.git-bg body {
+    background-image: url('/nodeconf-london-oneshot/images/git.jpg');
+    background-size: contain;
+}
+h1.reverse-text {
+    color: #ffffff;
+    background-color: #000000;
+    padding-bottom: 40px;
+}
+</style>
+<div class="slides">
+    
+    <section data-state="silo-bg">
+        <h1>Silo-free federated realtime applications</h1>
+        <h2><a href="https://twitter.com/lloydwatkin">@lloydwatkin</a></h2>
+    </section>
+    
+    <section>       
+        <section>
+        <h1>Why silo-free applications?</h1>
+        </section>
+        <section>
+            <h1>Open standards</h1>
+            
+            <blockquote>"When they succeed they dramatically lower the cost of creating something" - TBL</blockquote>
+            <aside class="notes">
+            <ul>
+            <li>Vitally important to a free and open internet</li>
+            <li>When you want to build an app using email you implement email</li>
+            <li>But with &gt;90% of email going through just 10 providers</li>
+            <li>What happens when one of these switches to its own protocol?</li>
+            <li>We could improve the standard, or we could gain a competitive advantage</li>
+            <li>Your application becomes more expensive to develop, more fragile, requires more maintainance as a result</li>
+            <li>Others follow suit.... MESS!</li>
+            <li>The problem is that this happens. Companies are built on open standards, disrupt the market then close people in later in order to increase profits</li>
+            <li>The cycle begins once again</li>
+            <li>Without competition everyone loses out, because one group gets to decide how everything works</li>
+            </ul>
+            </aside>
+        </section>
+        <section>
+            <h1>Data</h1>
+            <aside class="notes">
+            <ul>
+                <li>This crosses over to the indie web as well</li>
+                <li>We put more and more of our lives online using websites</li>
+                <li>What happens when these sites disappear?</li>
+                <li>...or a feature is deprecated?</li>
+                <li>They take away memories of friends, family, children...</li>
+                <li>...and sure you can download your data, but it will never be in the original form</li>
+                <li>When Geocities disppeared it took with it a huge amount of human knowledge, you could argue most of it was crap, but that's hard to judge, who wrote it? Compare with daily notes between ancient Egyptian workers which give us incredible insights into daily life</li>
+            </ul>
+            </aside>
+        </section>
+        <section>
+            <h1>Freedom</h1>
+            <aside class="notes">
+            <ul>
+            <li>Large sites more exposed to monitoring</li>
+            <li>Large companies gain agendas - political</li>
+            <li>...or become influenced</li>
+            <li>One of the greatest parts of the internet is that everyone has the ability to publish</li>
+            <li>What happens if your chosen platform decides is no longer likes the content of your posts?</li>
+            </ul>
+            </aside>
+        </section>
+        <section>
+        <h1>Terms &amp; Conditions may apply</h1>
+        <aside class="notes">
+        Sell your data<br/>
+        Provide it to third parties<br/>
+        Use you as part of an emotional experiment<br/>
+        Your privacy matters
+        </aside>
+        </section>
+    </section>
+    <section>
+        <h1>Why federated applications?</h1>
+        <aside class="notes">
+        <ul>
+        <li>Slow internets meant that talking to a local server was much quicker</li>
+        <li>If this could then talk to a remote server on your behalf (i.e. federated) and cache results, faster access!</li>
+        <li>Two core parts of what we use on the internet are built on this principle</li>
+        <li>Email, DNS = Running for 30+ years</li>
+        <li>Over time connections got faster &amp; so we somewhat lost the requirement for it</li>
+        <li>But in a world where we break down systems into many distributed parts the ability to communicate between them once again becomes vital. This can only be done via a common language</li>
+        <li>Federated systems are more difficult to attack and harder to bring down - uses the same principals as the IP stack</li>
+        </ul>
+        </aside>
+    </section> 
+        
+    <section>
+        <section>
+        <h1>Why don't we see more open federated systems?</h1>
+        </section>
+        
+        <section>
+            <h2 class="xmpp-green">Its hard(er)!</h2>
+            <h3>Companies often lean on these technologies, grow big, make their apis properietary</h3>
+            <aside class="notes">
+            <ul>
+                <li>Ulimately you won't be running the software</li>
+                <li>You need to be tolerant of environment, old versions</li>
+                <li>This isn't a problem in a centralized environment</li>
+                <li>You can't/its hard to mine user data for "free" applications</li>
+                <li>You can't show someone adverts on their own systems</li>
+                <li>Retrieving data from a remote systems is slower</li>
+                <li>Monteization</li>
+            </ul>
+            </aside>
+        </section>
+    </section>
+
+    
+        <section name="what-is-xmpp">
+
+           <h1>What is XMPP?</h1>
+           <br/>
+           <p class="xmpp-orange">e<em>X</em>tensible <em>M</em>essaging and <em>P</em>resence <em>P</em>rotocol<br/>(aka Jabber)</p>
+
+           <p class="xmpp-blue">Started around 1998</p>
+           <p class="xmpp-green">Became part of IETF in 2002</p>
+           <aside class="notes">
+               <p>Started in 1998 in a time of AOL IM, ICQ, Yahoo messenger</p>
+               <p>Needed several accounts to talk to your friends</p>
+               <p>Set of open standards documented for all to use</p>
+               <p>Becoming part of the IETF means its been highly scrutinised</p>
+           </aside>
+
+        </section>
+        
+        <section>
+            <h2>Does anyone use it?</h2>
+            
+            <ul>
+                <li>Google: <del>talk/hangouts</del>, GCM</li>
+                <li>Facebook: Chat interface</li>
+                <li>Whatsapp: Hacked version</li>
+                <li>Atlassian: HipChat</li>
+            </ul>
+            <br/><br/>
+            <h3 class="xmpp-green">Its usage is often not advertised</h3>
+            <aside class="notes">
+            banking, secure messaging systems for military, governments, insurance, etc
+            </aside>
+        </section>
+        
+        <section>
+            <h1>What is it used for?</h1>
+            <br/>
+            <h1>"X"</h1>
+            <aside class="notes">
+            Chat, social networks (buddycloud), M2M, pubsub, IOT, building management, signalling in WebRTC, UPNP
+            </aside>
+        </section>
+        
+        <section>
+            <h1><span class="xmpp-orange">Why are you talking</span><br/><span class="xmpp-blue">about a crusty old</span><br/><span class="xmpp-green">protocol?</span></h1>
+            <aside class="notes">
+            <p>Privacy/security is becoming more important to the mainstream</p>
+            <p>One of the ways to control this is through decentralisation</p>
+            <p>realtime becoming more important</p>
+            <p>We've been doing this for many years, lots of experience, learned from mistakes</p>
+            <p></p>
+            </aside>
+        </section>
+        
+    </section>
+    
+    <section name="fundamentals">
+        
+        <section name="fundamentals-title>">
+        <h1>Fundamentals</h1>
+        </section>
+        
+        <section name="fundamental-stanzas">
+        <h1 class="xmpp-blue">Stanzas</h1>
+        <h3 class="xmpp-green">...are snippets of XML</h3>
+        <br/>
+        <p class="xmpp-orange">There are three types:<br/>
+            &lt;message/&gt;, &lt;presence/&gt;, &amp; &lt;iq/&gt;</p>
+        <aside class="notes">
+           <p>XML streams eventually form a valid XML document</p>
+           <p>Message types, 'chat', 'groupchat', 'headline'</p>
+           <p>Presence - like your online status (online, busy, away, etc)</p>
+           <p>IQ (information query): GET/SET,  RESULT/ERROR - like basic HTTP verbs</p>
+       </aside>
+        </section>
+
+         <section>
+            <h2>The <abbr title="Jabber ID">JID</abbr></h2>
+            <br/>
+            <h3>[<span class="xmpp-orange">user</span>@] <span class="xmpp-blue">example.org</span> [/<span class="xmpp-green">mobile-phone</span>]</h3>
+            <br/>
+            
+            <ul>
+                <li><span class="xmpp-orange">local</span>: The user/device (i.e. client)</li>
+                <li><span class="xmpp-blue">domain</span>: Server you are addressing</li>
+                <li><span class="xmpp-green">resource</span>: Multiple connections?</li>
+            </ul>
+            <aside class="notes">
+            <p>Always designed with multiple devices in mind</p>
+            <p>Each device has a priority - route to the most 'available'</p>
+        </section>
+        
+        <section>
+            
+            <h1>Clients</h1>
+            
+            <h3 class="xmpp-orange">Thin clients, leave the work to the server</h3>
+            <h3 class="xmpp-blue">Connect over TCP/BOSH (Long polling)/WebSockets</h3>
+            <h3 class="xmpp-green">Data is pushed to clients, clients push data</h3>
+        
+        </section>
+             
+        <section>
+            
+            <h1>Servers</h1>
+            
+            <h3 class="xmpp-orange">Routes messages</h3>
+            <h3 class="xmpp-blue">Allow users to talk across servers</h3>
+            <h3 class="xmpp-green">Handles authentication and security</h3>
+        
+        </section> 
+             
+        <section>
+            <h1>Components</h1>
+            
+            <h3 class="xmpp-orange">Provide extended functionality</h3>
+            
+            <h3 class="xmpp-blue">Can send messages on behalf of clients</h3>
+            <h3 class="xmpp-green">Server + language agnostic</h3>
+        
+        </section> 
+    
+    </section>
+    
+    <section>
+        
+  <section>
+            <h1>Working with XMPP in nodejs</h1>
+            <aside class="notes">
+            <ul>
+            <li>nodejs very appropriate tool for XMPP</li>
+            <li>asynchronus / evented / streams all very useful</li>
+            </ul>
+            </aside>
+        </section>
+        <section>
+            <h1><a href="http://node-xmpp.github.io/doc/nodexmppclient.html">node-xmpp-client</a></h1><br/>
+            <pre class="javascript"><code>
+            var Client = require('node-xmpp-client')
+            var client = new Client({ /* options */ })
+            
+            client.on('online', console.log.bind)
+            client.on('stanza', function(stanza) {
+                stanza.attrs.to = stanza.attrs.to
+                delete stanza.attrs.from
+                client.send(stanza)
+            })
+            </code></pre>
+            <aside class="notes">
+            <ul>
+               <li>Create a client connection</li>
+               <li>Can also be used from a browser (BOSH, websocket)</li>
+               <li>Build chat bots, implement custom logic in a client</li>
+            </ul>
+            </aside>
+        </section>
+        <section>
+                <h2><a href="https://github.com/node-xmpp/node-xmpp-component">node-xmpp-component</a></h2><br/>
+                <ul>
+                    <li>Build components</li>
+                    <li>Implement your own business logic</li>
+                    <li>Send messages as local users</li>
+                </ul>
+                <aside class="notes">
+                <ul>
+                    <li>Components exist on a subdomain of the XMPP server</li>
+                    <li>Implement your own custom business logic</li>
+                    <li>You can send stanzas as local users</li>
+                    <li>Transferrable to any XMPP server you decide to use</li>
+                </ul>
+                </aside>
+        </section>
+        <section>
+                <h2><a href="https://github.com/node-xmpp/node-xmpp-server">node-xmpp-server</a></h2><br/>
+                <h3>Not ready as a full XMPP server, but you can start up and connect clients to handle job management and messaging</h3>
+        </section>
+        <section>
+            <h1><a href="https://xmpp-ftw.jit.su">XMPP-FTW</a></h1><br/>
+            
+            <h2>Powerful XMPP; Simple JSON</h2>
+            <aside class="notes">
+            <ul>
+            <li>Designed to be a client side library</li>
+            <li>Translates messages back and fore between XML and JSON</li>
+            <li>Evented</li>
+            <li>But perfectly useable purely server side to make building federated applications *really* simple</li>
+            </ul>
+            </aside>
+        </section>
+        
+    </section>
+    <section>
+        <section>
+            <h1>What can I build???</h1>
+        </section>
+
+        <section>
+            <h1>You can build <span class="xmpp-orange">many</span> applications with <span class="xmpp-green">basic XMPP</span> functionality</h1>
+
+            <aside class="notes">
+            <p>Chat applications</p>
+            <p>Just because chat means "words" to us, it doesn't mean your application can't pass 'data' in chat</p>
+            <p>Video conferencing solutions</p>
+            <p>Many applications are just publish subscribe, so we have that</p>
+            </aside>
+        </section>
+    
+        <section>
+        
+            <h1>Components</h1>
+            
+            <aside class="notes">
+            <p>Add additional functionality that isn't part of standard XMPP</p>
+            <p>You can choose to open this standard up, or keep to yourself</p>
+            </aside>
+        </section>
+        
+        <section>
+            <h1><span class="xmpp-blue">XMPP</span> has <span class="xmpp-orange">many</span> <span class="xmpp-green">other advantages</span></h1>    
+        </section>
+                
+        <section>
+            <h3 class="xmpp-green">✓ 1-to-1 and multi-user chat</h3>
+            <h3 class="xmpp-orange">✓ presence (online status)</h3>
+            <h3 class="xmpp-blue">✓ roster (address book)</h3>
+            <h3 class="xmpp-green">✓ publish subscribe</h3>
+            <h3 class="xmpp-orange">✓ federation (multi-server communications)</h3>
+            <h3 class="xmpp-blue">✓ security</h3>
+            <h3 class="xmpp-green">✓ authentication</h3>
+            <h3 class="xmpp-orange">✓ large, helpful community</h3>
+            <h3 class="xmpp-blue">✓ well thought-out standards</h3>
+        </section>
+        
+        <section>
+            <h3>Here's some interoperable webrtc demo clients from different projects:</h3>
+            
+            <h2><a class="xmpp-green" href="http://legastero.github.io/jingle-interop-demos/">legastero.github.io/jingle-interop-demos/</a></h2>
+            
+        </section>
+        
+        <section>
+        <h3>...and what if?</h3><br/>
+            
+        <h2 class="xmpp-green">buddycloud.org</h2>
+        <h2 class="xmpp-orange">Otalk</h2>
+        <h2 class="xmpp-blue">meet.jit.si</h2>
+        <aside class="notes">
+        <ul>
+            <li>A federated github? Git is distributed, why did we centralise it?</li>
+            <li>A federated social network? Buddycloud</li>
+            <li>An oauth type login where I don't have to trust a 3rd party</li>
+            <li>A full hangouts replacement - meet.jit.si</li>
+            <li>Only trusting your own server, never agreeing to painful T&amp;Cs</li>
+        </ul>       
+        </aside>
+        </section>
+        
+    </section>
+    <section>
+        <section>
+        <h1>Summary</h1>
+        
+        <h3 class="xmpp-orange">XMPP is a powerful, proven, open, secure, standards-based protocol</h3><h4 class="xmpp-orange">...great match for decentralized applications</h4><br/>
+        <h3 class="xmpp-blue">Lots of servers/clients/libraries<br/>
+            (many open source)</h3><br/>
+        <h3 class="xmpp-green">Great helpful community, who are actively helping to push the web forward</h3>
+        <aside class="notes">XMPP security days, WebRTC signalling over XMPP, 
+        New IoT extensions,<br/>Extensions to help accessibility</aside>
+        New IoT extensions,<br/>Extensions to help accessibility</aside>
+     </section>
+        
+    </section>
+    
+ 
+        
+    <section>
+        <section>
+        <h1 class="xmpp-green">♫ HEY ♫</h1>
+        <h2 class="xmpp-blue">I just met you...</h2>
+        <aside class="notes">
+        ...finally...
+        I'd like to offer anyone help trying to build this sort of application
+        and they say to finish on a song... so...
+        </aside>
+        </section>
+        <section>
+        <h1 class="xmpp-orange">...and this is crazy...</h1>
+        </section>
+        <section>
+        <h2 class="xmpp-green">♫ ..but here's my JID... ♫</h2><br/>
+        <h2 class="xmpp-blue"><strong>lloyd@evilprofessor.co.uk</strong></h2><br/>
+        <h2 class="xmpp-orange">♫ I.M. me maybe ♫</h2>
+        </section>
+    </section>
+    
+    <section name="questions">
+
+        <h3>Slides available @ <a href="http://talks.evilprofessor.co.uk/">http://talks.evilprofessor.co.uk/</a></h3><br/>
+        <h3>Get your own federated social network like *so* fast:<br/><a href="https://hosting.buddycloud.com">hosting.buddycloud.com</a></h3><br/>
+        <h3>@lloydwatkin</h3>
+    </section>
+</div>
