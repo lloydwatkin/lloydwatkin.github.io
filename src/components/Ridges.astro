@@ -39,6 +39,7 @@ const style = tint ? `--tint:${tint}` : undefined;
   aria-hidden="true"
   style={style}
   data-parallax={parallax ? '' : undefined}
+  data-fit={valley ? '' : undefined}
 >
   {ridges.map((r, i) => (
     <g class="ridge" data-depth={r.depth.toFixed(3)} style={`--i:${i};--n:${n}`}>
@@ -48,7 +49,7 @@ const style = tint ? `--tint:${tint}` : undefined;
         {r.windows?.map(([x, y]) => <rect class="ridge-window" x={x} y={y} width="5" height="6" />)}
         {r.contours.map((d) => <path class="ridge-contour" d={d} />)}
         {r.labels?.map((l) => (
-          <g class="hill-label">
+          <g class="hill-label" data-x={l.x} style={`transform-origin:${l.x}px ${l.y}px`}>
             <line x1={l.x} y1={l.y - 6} x2={l.x} y2={l.y - 34} />
             <text x={l.x} y={l.y - 58} text-anchor="middle">
               {l.name}
@@ -60,6 +61,46 @@ const style = tint ? `--tint:${tint}` : undefined;
     </g>
   ))}
 </svg>
+
+<script>
+  // Fit a fixed scene (the Swansea Valley) to its box. Plain `slice` scaling crops
+  // the sides whenever the box is narrower than 16:9, which loses the outer hills.
+  // Instead, stretch the scene horizontally by up to MIN–MAX to absorb most of the
+  // difference, and only crop what's left over: the sides on very narrow screens,
+  // the top of the sky on very wide ones. Labels are counter-scaled in CSS.
+  const MIN = 0.7;
+  const MAX = 1.5;
+  for (const svg of document.querySelectorAll<SVGSVGElement>('svg[data-fit]')) {
+    const [, , W, H] = svg.getAttribute('viewBox')!.split(/\s+/).map(Number);
+    const design = W / H;
+    const fit = () => {
+      const { width, height } = svg.getBoundingClientRect();
+      if (!width || !height) return;
+      const aspect = width / height;
+      const stretch = Math.min(MAX, Math.max(MIN, aspect / design));
+      const unstretched = aspect / stretch;
+      let vx = 0, vy = 0, vw = W, vh = H;
+      if (unstretched < design) {
+        vw = H * unstretched;
+        vx = (W - vw) / 2;
+      } else {
+        vh = W / unstretched;
+        vy = H - vh;
+      }
+      svg.setAttribute('preserveAspectRatio', 'none');
+      svg.setAttribute('viewBox', `${vx.toFixed(1)} ${vy.toFixed(1)} ${vw.toFixed(1)} ${vh.toFixed(1)}`);
+      svg.style.setProperty('--stretch', stretch.toFixed(4));
+      // Hide any label that would be cut off by the crop rather than show half of it.
+      for (const label of svg.querySelectorAll<SVGGElement>('.hill-label')) {
+        const x = Number(label.dataset.x);
+        const half = label.getBBox().width / 2 / stretch;
+        label.classList.toggle('clipped', x - half < vx || x + half > vx + vw);
+      }
+    };
+    fit();
+    new ResizeObserver(fit).observe(svg);
+  }
+</script>
 
 <style>
   .ridges {
@@ -90,6 +131,11 @@ const style = tint ? `--tint:${tint}` : undefined;
     fill: #e5a15a;
     opacity: 0.75;
   }
+  .hill-label {
+    /* Undo the horizontal stretch from the fit script so text keeps its shape. */
+    transform: scale(calc(1 / var(--stretch, 1)), 1);
+    transform-box: view-box;
+  }
   .hill-label line {
     stroke: #f2f6f4;
     stroke-opacity: 0.45;
@@ -108,7 +154,8 @@ const style = tint ? `--tint:${tint}` : undefined;
     opacity: 0.75;
   }
   /* Visitors can hide the names; the choice is set on <html> before paint. */
-  :global(.hill-names-off) .hill-label { display: none; }
+  :global(.hill-names-off) .hill-label,
+  .hill-label.clipped { display: none; }
   .intro .ridge-in {
     animation: rise 1.4s cubic-bezier(0.2, 0.7, 0.1, 1) both;
     animation-delay: calc((var(--n) - var(--i)) * 110ms);
