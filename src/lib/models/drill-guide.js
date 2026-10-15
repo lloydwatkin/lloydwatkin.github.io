@@ -4,6 +4,8 @@
 //
 // `wasm` is an initialised manifold-3d module: `const wasm = await Module(); wasm.setup()`.
 
+import { toStl as writeStl } from './stl.js';
+
 /** Every adjustable parameter, with defaults and limits for the form. Units are mm. */
 export const parameters = [
   { key: 'holeDiameter', label: 'Hole diameter', default: 16, min: 1, max: 60, step: 0.5, help: 'Drill bit size.' },
@@ -11,7 +13,7 @@ export const parameters = [
   { key: 'height', label: 'Height', default: 15, min: 3, max: 100, step: 1, help: 'Overall height. Taller keeps the bit straighter.' },
   { key: 'wall', label: 'Wall thickness', default: 6, min: 1.5, max: 30, step: 0.5, help: 'Material around the hole.' },
   { key: 'shape', label: 'Body shape', default: 'square', options: ['square', 'round'], help: 'Square is quicker to slice and print; round matches the original sketch.' },
-  { key: 'feet', label: 'Number of feet', default: 4, min: 3, max: 8, step: 1, help: 'Feet are spaced evenly. With 4, the notches form a cross-hair.' },
+  { key: 'feet', label: 'Number of feet', default: 4, min: 3, max: 8, step: 1, unit: '', help: 'Feet are spaced evenly. With 4, the notches form a cross-hair.' },
   { key: 'footLength', label: 'Foot length', default: 18, min: 0, max: 80, step: 1, help: 'How far each foot sticks out past the body.' },
   { key: 'footWidth', label: 'Foot width', default: 12, min: 4, max: 40, step: 1 },
   { key: 'footThickness', label: 'Foot thickness', default: 3, min: 1, max: 15, step: 0.5 },
@@ -72,32 +74,21 @@ export function describe(raw) {
   return { holeD, body, footprint: body + 2 * p.footLength, height: p.height };
 }
 
+/** One-line summary for the generator form. */
+export function summary(raw) {
+  const d = describe(raw);
+  return `${+d.holeD.toFixed(2)} mm hole · ${+d.body.toFixed(2)} mm body · ${d.height} mm high · ${+d.footprint.toFixed(2)} mm across the feet`;
+}
+
+/** Common entry point used by the generator form. */
+export const build = buildDrillGuide;
+
 export function fileName(raw) {
   const p = normalise(raw);
   return `drill-guide-${+(p.holeDiameter + p.clearance).toFixed(2)}mm-${p.height}h.stl`;
 }
 
-/** Binary STL from a Manifold. Returns an ArrayBuffer. */
+/** Binary STL. Returns an ArrayBuffer. */
 export function toStl(manifold, header = 'drill guide - evilprofessor.co.uk') {
-  const { vertProperties: v, triVerts: t, numProp: np } = manifold.getMesh();
-  const tris = t.length / 3;
-  const buf = new ArrayBuffer(84 + tris * 50);
-  const view = new DataView(buf);
-  for (let i = 0; i < Math.min(header.length, 80); i++) view.setUint8(i, header.charCodeAt(i) & 0x7f);
-  view.setUint32(80, tris, true);
-  let o = 84;
-  const p = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
-  for (let i = 0; i < tris; i++) {
-    for (let k = 0; k < 3; k++) {
-      const j = t[i * 3 + k] * np;
-      p[k][0] = v[j]; p[k][1] = v[j + 1]; p[k][2] = v[j + 2];
-    }
-    const ax = p[1][0] - p[0][0], ay = p[1][1] - p[0][1], az = p[1][2] - p[0][2];
-    const bx = p[2][0] - p[0][0], by = p[2][1] - p[0][1], bz = p[2][2] - p[0][2];
-    let nx = ay * bz - az * by, ny = az * bx - ax * bz, nz = ax * by - ay * bx;
-    const l = Math.hypot(nx, ny, nz) || 1;
-    for (const x of [nx / l, ny / l, nz / l, ...p[0], ...p[1], ...p[2]]) { view.setFloat32(o, x, true); o += 4; }
-    o += 2;
-  }
-  return buf;
+  return writeStl(manifold, header);
 }

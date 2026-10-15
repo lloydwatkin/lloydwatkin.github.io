@@ -61,6 +61,8 @@ import ModelViewer from '../../components/ModelViewer.astro';
 
 Put the `.stl`, `.glb` or `.gltf` file in `public/models/`, then add `src/content/models/<slug>.md` (see `desk-cable-clip.md`, which is an example you can delete). Optional `preview` is an image path under `public/` for the models index; `printSettings` is a free-form list shown beside the viewer.
 
+A model can also be parametric: set `generator` in its front matter and the page shows a form that rebuilds the STL in the browser. Each generator is a module in `src/lib/models/` (see `drill-guide.js` and `board-joint.js`) registered in `src/components/generators/ParametricGenerator.astro` and in the `generator` enum in `src/content.config.ts`. Regenerate a default file with `node scripts/build-<name>.mjs`.
+
 ### Tools
 
 A tool is an MDX page that imports a component with its own `<script>`. See `src/components/tools/PaceCalculator.astro` and `src/content/tools/pace-calculator.mdx`.

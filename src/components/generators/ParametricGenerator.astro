@@ -1,32 +1,42 @@
 ---
-// Parametric drill guide: a form that rebuilds the STL in the browser
+// Parametric model: a form that rebuilds the STL in the browser
 // (manifold-3d, WebAssembly) and swaps it into the 3D viewer as you type.
+// Each model is a module in src/lib/models/ exporting parameters, defaults,
+// normalise, build, summary, fileName and toStl; register it in `generators`
+// here and in the script below.
 import ModelViewer from '../ModelViewer.astro';
-import { parameters, defaults, fileName } from '../../lib/models/drill-guide.js';
+import * as drillGuide from '../../lib/models/drill-guide.js';
+import * as boardJoint from '../../lib/models/board-joint.js';
+
+const generators = { 'drill-guide': drillGuide, 'board-joint': boardJoint };
 
 interface Props {
+  generator: keyof typeof generators;
   src: string;
   color?: string;
   label: string;
 }
-const { src, color, label } = Astro.props;
+const { generator, src, color, label } = Astro.props;
+const { parameters, defaults, fileName } = generators[generator];
+type Param = (typeof parameters)[number] & { options?: string[]; labels?: Record<string, string>; unit?: string; help?: string };
+const id = (key: string) => `${generator}-${key}`;
 ---
-<drill-guide-generator>
+<parametric-generator data-generator={generator}>
   <ModelViewer src={src} format="stl" color={color} label={label} />
 
   <form class="gen" novalidate>
     <div class="fields">
-      {parameters.map((p) => (
+      {(parameters as Param[]).map((p) => (
         <div class="field">
-          <label for={`dg-${p.key}`}>{p.label}</label>
+          <label for={id(p.key)}>{p.label}</label>
           {p.options ? (
-            <select id={`dg-${p.key}`} name={p.key}>
-              {p.options.map((o) => <option value={o} selected={o === p.default}>{o[0].toUpperCase() + o.slice(1)}</option>)}
+            <select id={id(p.key)} name={p.key}>
+              {p.options.map((o) => <option value={o} selected={o === p.default}>{p.labels?.[o] ?? o[0].toUpperCase() + o.slice(1)}</option>)}
             </select>
           ) : (
             <div class="num">
               <input
-                id={`dg-${p.key}`}
+                id={id(p.key)}
                 name={p.key}
                 type="number"
                 inputmode="decimal"
@@ -34,12 +44,12 @@ const { src, color, label } = Astro.props;
                 max={p.max}
                 step={p.step}
                 value={p.default}
-                aria-describedby={p.help ? `dg-${p.key}-help` : undefined}
+                aria-describedby={p.help ? `${id(p.key)}-help` : undefined}
               />
-              {p.key !== 'feet' && <span class="unit">mm</span>}
+              {(p.unit ?? 'mm') && <span class="unit">{p.unit ?? 'mm'}</span>}
             </div>
           )}
-          {p.help && <p class="help" id={`dg-${p.key}-help`}>{p.help}</p>}
+          {p.help && <p class="help" id={`${id(p.key)}-help`}>{p.help}</p>}
         </div>
       ))}
     </div>
@@ -53,17 +63,32 @@ const { src, color, label } = Astro.props;
       </div>
     </div>
   </form>
-</drill-guide-generator>
+</parametric-generator>
 
 <script>
   import Module from 'manifold-3d';
   import wasmUrl from 'manifold-3d/manifold.wasm?url';
-  import { parameters, defaults, normalise, buildDrillGuide, toStl, describe, fileName } from '../../lib/models/drill-guide.js';
+  import * as drillGuide from '../../lib/models/drill-guide.js';
+  import * as boardJoint from '../../lib/models/board-joint.js';
+
+  type Model = {
+    parameters: { key: string; default: unknown; options?: readonly string[] }[];
+    defaults: Record<string, unknown>;
+    normalise: (raw: Record<string, unknown>) => Record<string, any>;
+    build: (wasm: any, p: Record<string, unknown>) => any;
+    summary: (p: Record<string, unknown>, box?: { min: number[]; max: number[] }) => string;
+    fileName: (p: Record<string, unknown>) => string;
+    toStl: (m: any) => ArrayBuffer;
+  };
+  const generators: Record<string, Model> = { 'drill-guide': drillGuide, 'board-joint': boardJoint };
 
   type Viewer = HTMLElement & { showStl?: (data: ArrayBuffer) => void };
 
-  class DrillGuideGenerator extends HTMLElement {
+  class ParametricGenerator extends HTMLElement {
     async connectedCallback() {
+      const model = generators[this.dataset.generator ?? ''];
+      if (!model) return;
+      const { parameters, defaults, normalise, build, summary: describe, fileName, toStl } = model;
       const form = this.querySelector('form')!;
       const summary = this.querySelector<HTMLElement>('.summary')!;
       const download = this.querySelector<HTMLAnchorElement>('[data-act="download"]')!;
@@ -85,7 +110,7 @@ const { src, color, label } = Astro.props;
         wasm.setup();
       } catch (err) {
         console.error(err);
-        summary.textContent = 'The generator could not start in this browser. The download is the default 16 mm guide.';
+        summary.textContent = 'The generator could not start in this browser. The download is the default version.';
         return;
       }
       await customElements.whenDefined('model-viewer-3d');
@@ -94,10 +119,12 @@ const { src, color, label } = Astro.props;
         const raw = read();
         const p = normalise(raw);
         let stl: ArrayBuffer;
+        let box: { min: number[]; max: number[] };
         try {
-          const guide = buildDrillGuide(wasm, p);
-          stl = toStl(guide);
-          guide.delete();
+          const shape = build(wasm, p);
+          stl = toStl(shape);
+          box = shape.boundingBox();
+          shape.delete();
         } catch (err) {
           console.error(err);
           summary.textContent = 'Those numbers do not make a valid shape. Try different values.';
@@ -110,11 +137,8 @@ const { src, color, label } = Astro.props;
         download.href = blobUrl;
         download.download = fileName(p);
 
-        const d = describe(p);
         const clamped = parameters.some((q) => !q.options && raw[q.key] !== '' && Number(raw[q.key]) !== p[q.key]);
-        summary.textContent =
-          `${+d.holeD.toFixed(2)} mm hole · ${+d.body.toFixed(2)} mm body · ${d.height} mm high · ${+d.footprint.toFixed(2)} mm across the feet` +
-          (clamped ? ' (some values were out of range and have been limited)' : '');
+        summary.textContent = describe(p, box) + (clamped ? ' (some values were out of range and have been limited)' : '');
 
         // Keep the address bar in step, listing only what differs from the defaults.
         const q = new URLSearchParams();
@@ -149,11 +173,11 @@ const { src, color, label } = Astro.props;
       regenerate();
     }
   }
-  customElements.define('drill-guide-generator', DrillGuideGenerator);
+  customElements.define('parametric-generator', ParametricGenerator);
 </script>
 
 <style>
-  drill-guide-generator { display: block; }
+  parametric-generator { display: block; }
   .gen {
     margin-top: 1.25rem;
     padding: 1.5rem;
