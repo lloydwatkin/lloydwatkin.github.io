@@ -1,0 +1,29 @@
+---
+title: A new site, built from Markdown
+description: The site has been rebuilt with Astro so posts live as plain Markdown files and the design can change without touching them.
+date: 2026-10-15
+category: coding
+tags: [astro, github pages]
+---
+
+This is the first post on the rebuilt site. It's an example to show how posts look, so feel free to edit or delete it.
+
+## How it works
+
+Every post is a Markdown (or MDX) file in `src/content/posts/`. The front matter at the top says which category it belongs to:
+
+```yaml
+---
+title: My long run in the hills
+description: One sentence that appears in lists and search results.
+date: 2026-10-20
+category: running
+tags: [trail, training]
+---
+```
+
+When anything is pushed to GitHub, a workflow builds the site and publishes it to GitHub Pages. The layouts, colours and fonts are all separate from the posts, so a redesign means changing a few files in `src/layouts/` and `src/styles/` and every page is regenerated.
+
+## The old talks
+
+Slides from talks I gave between 2013 and 2014 are still here, at the same addresses they always had. They are listed on the [talks page](/talks/).

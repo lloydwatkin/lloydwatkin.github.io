@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageBanner from '../../components/PageBanner.astro';
+import { getTools } from '../../lib/content';
+import { getCategory } from '../../data/categories';
+
+const tools = await getTools();
+---
+<BaseLayout title="Tools" description="Small tools that run in your browser." overlayHeader>
+  <PageBanner seed={91} tint="#1fa3b0">
+    <h1 class="page-title">Tools</h1>
+    <p class="page-sub">Small calculators and utilities that run in your browser. Nothing is sent anywhere.</p>
+  </PageBanner>
+  <div class="wrap">
+    <ul class="list">
+      {tools.map((t) => {
+        const cat = t.data.category ? getCategory(t.data.category) : undefined;
+        return (
+          <li style={cat ? `--cat:${cat.color}` : undefined}>
+            <a href={`/tools/${t.id}/`}>
+              <span class="swatch" />
+              <span class="t">{t.data.title}</span>
+              <span class="d">{t.data.description}</span>
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+</BaseLayout>
+
+<style>
+  .list { list-style: none; padding: 0; margin: 3.5rem 0 0; }
+  .list li { border-top: 1px solid var(--line); }
+  .list li:last-child { border-bottom: 1px solid var(--line); }
+  .list a {
+    display: grid;
+    grid-template-columns: auto 16rem 1fr;
+    align-items: center;
+    gap: 0.4rem 1.2rem;
+    padding-block: 1.4rem;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .t { font-weight: 700; font-size: var(--step-1); }
+  .d { color: var(--ink-soft); font-family: var(--font-body); }
+  .list a:hover .t { color: var(--link); }
+  @media (max-width: 640px) { .list a { grid-template-columns: auto 1fr; } .d { grid-column: 2; } }
+</style>

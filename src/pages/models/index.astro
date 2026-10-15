@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageBanner from '../../components/PageBanner.astro';
+import { getModels, formatDate } from '../../lib/content';
+import { getCategory } from '../../data/categories';
+
+const models = await getModels();
+---
+<BaseLayout title="3D models" description="3D models I have designed, free to view, download and print." overlayHeader>
+  <PageBanner seed={77} tint="#5f9a4b">
+    <h1 class="page-title">3D models</h1>
+    <p class="page-sub">Things I have designed. Spin them around in the browser, then download the file to print or remix.</p>
+  </PageBanner>
+
+  <div class="wrap">
+    {models.length === 0 && <p>No models yet.</p>}
+    <ul class="grid">
+      {models.map((m) => {
+        const cat = getCategory(m.data.category);
+        return (
+          <li style={`--cat:${cat.color}`}>
+            <a href={`/models/${m.id}/`}>
+              <div class="thumb">
+                {m.data.preview
+                  ? <img src={m.data.preview} alt="" loading="lazy" />
+                  : (
+                    <svg viewBox="0 0 120 120" aria-hidden="true">
+                      <path d="M60 14 104 38v48L60 110 16 86V38z" fill="none" stroke="currentColor" stroke-width="2" />
+                      <path d="M16 38l44 24 44-24M60 62v48" fill="none" stroke="currentColor" stroke-width="2" />
+                    </svg>
+                  )}
+                <span class="fmt">{m.data.format.toUpperCase()}</span>
+              </div>
+              <h2>{m.data.title}</h2>
+              <p>{m.data.description}</p>
+              <p class="date">{formatDate(m.data.date)}</p>
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+</BaseLayout>
+
+<style>
+  .grid {
+    list-style: none;
+    padding: 0;
+    margin: 3.5rem 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+    gap: 2.5rem 2rem;
+  }
+  .grid a { color: var(--ink); text-decoration: none; display: grid; gap: 0.4rem; }
+  .thumb {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(160deg, #22394a, var(--ridge-near));
+    display: grid;
+    place-items: center;
+    color: color-mix(in oklab, var(--cat) 60%, white);
+    margin-bottom: 0.6rem;
+    overflow: hidden;
+  }
+  .thumb svg { width: 38%; transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.1, 1); }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .grid a:hover .thumb svg { transform: rotate(-8deg) scale(1.06); }
+  .fmt { position: absolute; right: 0.8rem; bottom: 0.7rem; font-size: 0.8rem; font-weight: 700; color: #cfe0dd; }
+  .grid h2 { font-size: var(--step-1); }
+  .grid a:hover h2 { color: var(--link); }
+  .grid p { margin: 0; color: var(--ink-soft); font-family: var(--font-body); }
+  .date { font-family: var(--font-display); color: var(--muted); font-size: 0.9rem; }
+</style>

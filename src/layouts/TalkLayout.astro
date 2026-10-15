@@ -1,0 +1,62 @@
+---
+// Renders a legacy reveal.js deck (ported from the old Jekyll `slides` layout).
+// The reveal.js 2.4 engine and themes live in public/reveal/.
+interface Props {
+  title: string;
+  description: string;
+  theme: string;
+  extraOptions?: string;
+  html: string;
+}
+const { title, description, theme, extraOptions = '', html } = Astro.props;
+const R = '/reveal';
+
+const init = `
+Reveal.initialize({
+  controls: true,
+  progress: true,
+  history: true,
+  center: true,
+  theme: ${JSON.stringify(theme)} || Reveal.getQueryHash().theme,
+  transition: Reveal.getQueryHash().transition || 'default',
+  dependencies: [
+    { src: '${R}/lib/js/classList.js', condition: function () { return !document.body.classList; } },
+    { src: '${R}/plugin/markdown/marked.js', condition: function () { return !!document.querySelector('[data-markdown]'); } },
+    { src: '${R}/plugin/markdown/markdown.js', condition: function () { return !!document.querySelector('[data-markdown]'); } },
+    { src: '${R}/plugin/highlight/highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } },
+    { src: '${R}/plugin/zoom-js/zoom.js', async: true, condition: function () { return !!document.body.classList; } },
+    { src: '${R}/plugin/notes/notes.js', async: true, condition: function () { return !!document.body.classList; } }
+  ]
+  ${extraOptions}
+});`;
+
+const printCss = `document.write('<link rel="stylesheet" href="${R}/css/print/' + (window.location.search.match(/print-pdf/gi) ? 'pdf' : 'paper') + '.css" type="text/css" media="print">');`;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content="Lloyd Watkin" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href={`${R}/css/reveal.min.css`} />
+    <link rel="stylesheet" href={`${R}/css/theme/${theme}.css`} id="theme" />
+    <link rel="stylesheet" href={`${R}/lib/css/zenburn.css`} />
+    <script is:inline set:html={printCss} />
+    <link rel="stylesheet" href={`${R}/vendor/fa/css/font-awesome.min.css`} />
+    <link rel="stylesheet" href={`${R}/css/style.css`} />
+    <style is:inline>
+      .back-to-site { position: fixed; top: 10px; left: 12px; z-index: 40; font: 600 13px/1 system-ui, sans-serif; color: inherit; opacity: .55; text-decoration: none; padding: 6px 10px; border-radius: 999px; background: rgba(0,0,0,.25); color: #fff; }
+      .back-to-site:hover, .back-to-site:focus-visible { opacity: 1; }
+      @media print { .back-to-site { display: none; } }
+    </style>
+  </head>
+  <body>
+    <a class="back-to-site" href="/talks/">All talks</a>
+    <div class="reveal" set:html={html} />
+    <script is:inline src={`${R}/lib/js/head.min.js`}></script>
+    <script is:inline src={`${R}/js/reveal.min.js`}></script>
+    <script is:inline set:html={init} />
+  </body>
+</html>

@@ -1,0 +1,156 @@
+---
+// Pace / time / distance calculator. Fill in any two, it works out the third.
+---
+<pace-calculator class="calc">
+  <form>
+    <fieldset class="dist">
+      <legend>Distance</legend>
+      <div class="row">
+        <label class="visually-hidden" for="pc-dist">Distance</label>
+        <input id="pc-dist" name="distance" inputmode="decimal" placeholder="e.g. 10" autocomplete="off" />
+        <label class="visually-hidden" for="pc-unit">Unit</label>
+        <select id="pc-unit" name="unit">
+          <option value="km">km</option>
+          <option value="mi">miles</option>
+        </select>
+      </div>
+      <div class="presets" aria-label="Common race distances">
+        <button type="button" data-km="5">5K</button>
+        <button type="button" data-km="10">10K</button>
+        <button type="button" data-km="21.0975">Half</button>
+        <button type="button" data-km="42.195">Marathon</button>
+        <button type="button" data-km="50">50K</button>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Time</legend>
+      <label class="visually-hidden" for="pc-time">Time (h:mm:ss)</label>
+      <input id="pc-time" name="time" placeholder="h:mm:ss" autocomplete="off" />
+    </fieldset>
+    <fieldset>
+      <legend>Pace</legend>
+      <label class="visually-hidden" for="pc-pace">Pace (mm:ss per unit)</label>
+      <input id="pc-pace" name="pace" placeholder="mm:ss" autocomplete="off" />
+      <span class="per">per <span data-unit>km</span></span>
+    </fieldset>
+    <div class="actions">
+      <button class="button primary" type="submit">Calculate</button>
+      <button class="button" type="reset">Clear</button>
+    </div>
+    <p class="result" aria-live="polite"></p>
+  </form>
+</pace-calculator>
+
+<script>
+  const MI = 1.609344;
+
+  function parseTime(s: string): number | null {
+    if (!s.trim()) return null;
+    const parts = s.trim().split(':').map(Number);
+    if (parts.some((n) => Number.isNaN(n) || n < 0) || parts.length > 3) return NaN;
+    return parts.reduce((acc, n) => acc * 60 + n, 0);
+  }
+  function fmt(sec: number, withHours = true) {
+    const s = Math.round(sec);
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const r = s % 60;
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return withHours || h ? `${h}:${pad(m)}:${pad(r)}` : `${m}:${pad(r)}`;
+  }
+
+  class PaceCalculator extends HTMLElement {
+    connectedCallback() {
+      const form = this.querySelector('form')!;
+      const out = this.querySelector<HTMLElement>('.result')!;
+      const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+      const unitLabel = this.querySelector<HTMLElement>('[data-unit]')!;
+
+      el('unit').addEventListener('change', () => {
+        unitLabel.textContent = el('unit').value === 'km' ? 'km' : 'mile';
+      });
+      this.querySelectorAll<HTMLButtonElement>('[data-km]').forEach((b) =>
+        b.addEventListener('click', () => {
+          const km = Number(b.dataset.km);
+          el('distance').value = String(+(el('unit').value === 'km' ? km : km / MI).toFixed(3));
+        }),
+      );
+      form.addEventListener('reset', () => { out.textContent = ''; });
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const dRaw = el('distance').value.trim();
+        const d = dRaw ? Number(dRaw) : null;
+        const t = parseTime(el('time').value);
+        const p = parseTime(el('pace').value);
+        const unit = el('unit').value === 'km' ? 'km' : 'mile';
+        const other = unit === 'km' ? 'mile' : 'km';
+        const convert = (pace: number) => (unit === 'km' ? pace * MI : pace / MI);
+
+        if ((d !== null && (Number.isNaN(d) || d <= 0)) || Number.isNaN(t) || Number.isNaN(p)) {
+          out.textContent = 'Check the values: distance is a number, time is h:mm:ss and pace is mm:ss.';
+          return;
+        }
+        if (d && t) {
+          const pace = t / d;
+          el('pace').value = fmt(pace, false);
+          out.textContent = `Pace ${fmt(pace, false)} per ${unit} (${fmt(convert(pace), false)} per ${other}).`;
+        } else if (d && p) {
+          const time = p * d;
+          el('time').value = fmt(time);
+          out.textContent = `Finish time ${fmt(time)}.`;
+        } else if (t && p) {
+          const dist = t / p;
+          el('distance').value = dist.toFixed(2);
+          out.textContent = `Distance ${dist.toFixed(2)} ${unit === 'km' ? 'km' : 'miles'}.`;
+        } else {
+          out.textContent = 'Fill in any two of distance, time and pace.';
+        }
+      });
+    }
+  }
+  customElements.define('pace-calculator', PaceCalculator);
+</script>
+
+<style>
+  .calc {
+    display: block;
+    font-family: var(--font-display);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: clamp(1.2rem, 4vw, 2rem);
+    margin-block: 2rem;
+  }
+  form { display: grid; gap: 1.4rem; }
+  fieldset { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; }
+  fieldset.dist { display: grid; }
+  legend { font-weight: 700; font-size: 1.05rem; margin-bottom: 0.5rem; padding: 0; }
+  .row { display: flex; gap: 0.6rem; }
+  input, select {
+    font: 500 1.25rem/1.2 var(--font-display);
+    font-variant-numeric: tabular-nums;
+    padding: 0.6rem 0.8rem;
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    color: var(--ink);
+    width: 11rem;
+  }
+  select { width: auto; }
+  input:focus { border-color: var(--focus); outline: none; box-shadow: 0 0 0 3px color-mix(in oklab, var(--focus) 30%, transparent); }
+  .presets { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .presets button {
+    font: 600 0.88rem/1 var(--font-display);
+    padding: 0.45rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .presets button:hover { border-color: var(--ink-soft); color: var(--ink); }
+  .per { color: var(--muted); }
+  .actions { display: flex; gap: 0.6rem; }
+  .result { margin: 0; font-size: 1.2rem; font-weight: 600; min-height: 1.5em; }
+</style>

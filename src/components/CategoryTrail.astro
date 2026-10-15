@@ -1,0 +1,74 @@
+---
+// Categories drawn as waypoints along a single trail line.
+import { categories } from '../data/categories';
+import { getPosts } from '../lib/content';
+
+interface Props { current?: string }
+const { current } = Astro.props;
+const posts = await getPosts();
+const counts = Object.fromEntries(categories.map((c) => [c.slug, posts.filter((p) => p.data.category === c.slug).length]));
+---
+<nav class="trail" aria-label="Categories">
+  <ol>
+    {categories.map((c) => (
+      <li style={`--cat:${c.color}`}>
+        <a href={`/category/${c.slug}/`} aria-current={current === c.slug ? 'page' : undefined}>
+          <span class="waypoint" aria-hidden="true"></span>
+          <span class="name">{c.name}</span>
+          <span class="count">{counts[c.slug] === 1 ? '1 post' : `${counts[c.slug]} posts`}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .trail ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(7rem, 1fr);
+    position: relative;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  /* The trail line runs through every waypoint */
+  .trail ol::before {
+    content: '';
+    position: absolute;
+    left: 0.6rem;
+    right: 0;
+    top: 0.6rem;
+    border-top: 2px dashed var(--line);
+  }
+  .trail li { position: relative; }
+  @media (max-width: 560px) {
+    .trail ol { grid-auto-flow: row; grid-template-columns: repeat(3, 1fr); row-gap: 1.2rem; }
+    .trail ol::before { display: none; }
+  }
+  .trail a {
+    display: grid;
+    gap: 0.15rem;
+    padding: 0 1rem 0.5rem 0;
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .waypoint {
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 3px solid var(--cat);
+    position: relative;
+    margin-bottom: 0.6rem;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .trail a:hover .waypoint, .trail a:focus-visible .waypoint, .trail a[aria-current='page'] .waypoint {
+    background: var(--cat);
+    transform: scale(1.15);
+  }
+  .name { font-weight: 700; font-size: var(--step-1); letter-spacing: -0.01em; }
+  .count { color: var(--muted); font-size: 0.9rem; }
+</style>

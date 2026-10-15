@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageBanner from '../../components/PageBanner.astro';
+import PostList from '../../components/PostList.astro';
+import CategoryTrail from '../../components/CategoryTrail.astro';
+import { categories } from '../../data/categories';
+import { getPosts, getModels } from '../../lib/content';
+
+export function getStaticPaths() {
+  return categories.map((c) => ({ params: { category: c.slug }, props: { cat: c } }));
+}
+
+const { cat } = Astro.props;
+const posts = (await getPosts()).filter((p) => p.data.category === cat.slug);
+const models = (await getModels()).filter((m) => m.data.category === cat.slug);
+const seed = [...cat.slug].reduce((a, c) => a + c.charCodeAt(0), 5);
+---
+<BaseLayout title={cat.name} description={cat.blurb} overlayHeader>
+  <PageBanner tint={cat.color} seed={seed}>
+    <h1 class="title" style={`--cat:${cat.color}`}><span class="swatch" />{cat.name}</h1>
+    <p class="sub">{cat.blurb}</p>
+  </PageBanner>
+
+  <div class="wrap trail-wrap"><CategoryTrail current={cat.slug} /></div>
+
+  <div class="wrap">
+    {posts.length
+      ? <PostList posts={posts} showCategory={false} />
+      : <p class="empty">No {cat.name} posts yet. Add one with <code>category: {cat.slug}</code> in its front matter.</p>}
+
+    {models.length > 0 && (
+      <section class="models">
+        <h2>{cat.name} models</h2>
+        <ul>{models.map((m) => <li><a href={`/models/${m.id}/`}>{m.data.title}</a></li>)}</ul>
+      </section>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .title { font-size: var(--step-5); font-stretch: 80%; font-weight: 800; letter-spacing: -0.03em; display: flex; align-items: center; gap: 0.25em; }
+  .title .swatch { width: 0.28em; height: 0.28em; box-shadow: 0 0 0 0.08em color-mix(in oklab, var(--cat) 35%, transparent); }
+  .sub { color: #c9d7d6; font-size: var(--step-1); margin: 0.8rem 0 0; max-width: 40ch; }
+  .trail-wrap { margin-block: 3rem 2rem; }
+  .empty { color: var(--muted); }
+  .models { margin-top: 3rem; }
+  .models h2 { font-size: var(--step-2); margin-bottom: 0.6rem; }
+</style>
