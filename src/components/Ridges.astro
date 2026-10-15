@@ -26,7 +26,7 @@ const W = 1600;
 const valley = scene === 'swansea-valley';
 // The valley scene is drawn on a fixed 1600×900 canvas.
 const H = valley ? 900 : height;
-const ridges: (Omit<ValleyLayer, 'extras' | 'windows'> & Partial<ValleyLayer>)[] = valley
+const ridges: (Omit<ValleyLayer, 'extras' | 'windows' | 'labels'> & Partial<ValleyLayer>)[] = valley
   ? makeValleyRidges()
   : makeRidges({ width: W, height: H, layers, seed, top, bottom });
 const n = ridges.length;
@@ -47,6 +47,15 @@ const style = tint ? `--tint:${tint}` : undefined;
         {r.extras?.map((d) => <path class="ridge-fill" d={d} />)}
         {r.windows?.map(([x, y]) => <rect class="ridge-window" x={x} y={y} width="5" height="6" />)}
         {r.contours.map((d) => <path class="ridge-contour" d={d} />)}
+        {r.labels?.map((l) => (
+          <g class="hill-label">
+            <line x1={l.x} y1={l.y - 6} x2={l.x} y2={l.y - 34} />
+            <text x={l.x} y={l.y - 58} text-anchor="middle">
+              {l.name}
+              <tspan x={l.x} dy="18">{l.note}</tspan>
+            </text>
+          </g>
+        ))}
       </g>
     </g>
   ))}
@@ -81,6 +90,25 @@ const style = tint ? `--tint:${tint}` : undefined;
     fill: #e5a15a;
     opacity: 0.75;
   }
+  .hill-label line {
+    stroke: #f2f6f4;
+    stroke-opacity: 0.45;
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+  .hill-label text {
+    font-family: var(--font-display);
+    font-size: 17px;
+    letter-spacing: 0.06em;
+    fill: #f2f6f4;
+    opacity: 0.85;
+  }
+  .hill-label tspan {
+    font-size: 14px;
+    opacity: 0.75;
+  }
+  /* Visitors can hide the names; the choice is set on <html> before paint. */
+  :global(.hill-names-off) .hill-label { display: none; }
   .intro .ridge-in {
     animation: rise 1.4s cubic-bezier(0.2, 0.7, 0.1, 1) both;
     animation-delay: calc((var(--n) - var(--i)) * 110ms);

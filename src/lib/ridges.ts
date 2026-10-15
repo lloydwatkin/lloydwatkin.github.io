@@ -105,19 +105,35 @@ export interface ValleyLayer extends RidgeLayer {
   extras: string[];
   /** Lit windows as [x, y] in viewBox units */
   windows: Pt[];
+  /** Named hills on this layer, anchored at the summit in viewBox units */
+  labels: HillLabel[];
+}
+
+export interface HillLabel {
+  x: number;
+  y: number;
+  name: string;
+  /** Second line, e.g. height */
+  note: string;
 }
 
 const VALLEY_W = 1600;
 const VALLEY_H = 900;
 
-const VALLEY: { pts: Pt[]; texture: number; terraces?: boolean }[] = [
+const VALLEY: { pts: Pt[]; texture: number; terraces?: boolean; labels?: HillLabel[] }[] = [
   {
     pts: [[0,398],[150,388],[300,370],[420,346],[520,322],[600,304],[650,297],[700,302],[732,328],[768,352],[840,367],[900,361],[960,338],[1030,318],[1080,313],[1130,321],[1200,341],[1280,352],[1330,343],[1372,347],[1450,368],[1600,382]],
     texture: 0,
+    labels: [
+      { x: 650, y: 297, name: 'Fan Brycheiniog', note: '802 m' },
+      { x: 1080, y: 313, name: 'Fan Gyhirych', note: '725 m' },
+      { x: 1335, y: 343, name: 'Fan Nedd', note: '663 m' },
+    ],
   },
   {
     pts: [[0,442],[120,433],[260,441],[400,459],[520,479],[620,500],[700,513],[780,520],[880,506],[950,484],[995,460],[1018,446],[1036,452],[1052,443],[1072,449],[1098,462],[1170,471],[1250,468],[1310,456],[1350,445],[1386,451],[1430,469],[1520,480],[1600,478]],
     texture: 0,
+    labels: [{ x: 1040, y: 444, name: 'Cribarth', note: 'the Sleeping Giant · 428 m' }],
   },
   { pts: [[0,502],[140,506],[280,522],[420,549],[560,586],[680,618],[780,636],[860,641],[940,631],[1040,607],[1160,581],[1280,561],[1420,549],[1600,541]], texture: 3 },
   { pts: [[0,562],[120,567],[260,591],[400,631],[520,671],[620,700],[700,716],[780,722],[860,716],[960,694],[1080,664],[1200,641],[1330,625],[1460,616],[1600,611]], texture: 4 },
@@ -188,6 +204,7 @@ export function makeValleyRidges(contours = 3): ValleyLayer[] {
       depth: 1 - t,
       extras: house ? [house.d] : [],
       windows: house ? house.windows : [],
+      labels: layer.labels ?? [],
     };
   });
 }
