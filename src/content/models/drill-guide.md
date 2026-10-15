@@ -22,6 +22,31 @@ I sketched this on a notepad: a block with a hole straight through it and feet s
 
 The default is a 16 mm hole in a guide 15 mm high, with a square body and four feet. Square is a little quicker to slice and print than round, and the body shape is one of the options if you prefer the round look of the original sketch.
 
+## The printed guide
+
+Here's the default 16 mm version, printed.
+
+<figure>
+  <img src="/models/drill-guide-printed.jpg" alt="The printed drill guide on a grey surface: a white square block with a round hole through the middle and four flat feet with V-notches at their tips." width="1600" height="1205" loading="lazy" />
+</figure>
+
+<div class="photo-pair">
+  <figure>
+    <img src="/models/drill-guide-top.jpg" alt="The guide stood on edge, looking straight down the 16 mm hole, with the four notched feet forming an X." width="1600" height="1205" loading="lazy" />
+    <figcaption>Looking down the hole.</figcaption>
+  </figure>
+  <figure>
+    <img src="/models/drill-guide-underside.jpg" alt="The underside of the guide: one flat face where the feet and body meet, so it sits level on the work." width="1600" height="1205" loading="lazy" />
+    <figcaption>The flat underside that sits on the work.</figcaption>
+  </figure>
+</div>
+
+<style>
+  .photo-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .photo-pair figure { margin: 0; }
+  @media (max-width: 520px) { .photo-pair { grid-template-columns: 1fr; } }
+</style>
+
 ## Using it
 
 Mark the centre of your hole with a pencil cross, extending the lines out past where the feet will sit. Each foot ends in a small V-notch that lines up with the centre of the hole. With four feet, line the notches up with your cross and the hole sits right over your mark. Clamp it or hold it firmly, then drill.
