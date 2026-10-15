@@ -41,7 +41,7 @@ const models = defineCollection({
     title: z.string(),
     description: z.string(),
     date: z.coerce.date(),
-    /** Path under /public, e.g. /models/cable-clip.stl */
+    /** Path under /public, e.g. /models/drill-guide.stl */
     file: z.string(),
     format: z.enum(['stl', 'glb', 'gltf']),
     /** Optional preview image under /public, shown on the models index */
