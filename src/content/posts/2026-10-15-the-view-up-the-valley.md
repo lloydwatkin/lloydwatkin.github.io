@@ -17,7 +17,7 @@ The scene looks north-east up Cwm Tawe from the hillside above the village. Ther
 1. **The Black Mountain escarpment.** Fan Brycheiniog (802 m) on the left, with its steep eastern face dropping to the col at the head of the Tawe. Then the rounded top of Fan Gyhirych and, further right, Fan Nedd.
 2. **Cribarth.** The Sleeping Giant above Abercraf, with his brow, nose and chin on the left and his knees on the right. The hills above Ystradgynlais come in from the left.
 3. **The valley sides,** two layers closing into a V where the river runs.
-4. **A hillside of terraces,** stepping down the slope, with chimney stacks and a few lit windows.
+4. **Terraces on the left-hand side of the valley,** stepping down the slope towards the river, with chimney stacks and a few lit windows.
 5. **The foreground fields,** which is where the title sits.
 
 ## How it's built

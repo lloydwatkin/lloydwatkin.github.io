@@ -149,7 +149,8 @@ function roughen(ctrl: Pt[], texture: number, seed: number): Pt[] {
 /** Rows of terraced houses stepping down the slope, with chimneys and a few lit windows. */
 function terraces(ctrl: Pt[]): { d: string; windows: Pt[] } {
   const rand = mulberry32(42);
-  const rows: [number, number][] = [[1070, 6], [1210, 7], [1370, 6]];
+  // Left-hand side of the valley, stepping down towards the river.
+  const rows: [number, number][] = [[150, 6], [310, 7], [480, 6]];
   const w = 22;
   let d = '';
   const windows: Pt[] = [];
@@ -157,7 +158,7 @@ function terraces(ctrl: Pt[]): { d: string; windows: Pt[] } {
     const len = n * w;
     const ground = Math.min(lerpY(ctrl, x0), lerpY(ctrl, x0 + len)) + 6;
     const top = ground - 22;
-    d += `M${x0},${ground + 30}L${x0},${top}L${x0 + len},${top}L${x0 + len},${ground + 30}Z`;
+    d += `M${x0},${ground + 60}L${x0},${top}L${x0 + len},${top}L${x0 + len},${ground + 60}Z`;
     for (let k = 0; k <= n; k++) {
       const cx = x0 + k * w - 2;
       if (k > 0 && k < n) d += `M${cx},${top}L${cx},${top - 7}L${cx + 5},${top - 7}L${cx + 5},${top}Z`;
