@@ -2,7 +2,7 @@
 // Layered, contour-lined ridgelines. Far layers drift slower than near ones
 // as the page scrolls (parallax). Colours come from CSS custom properties so
 // the same component can be tinted per category.
-import { makeRidges } from '../lib/ridges';
+import { makeRidges, makeValleyRidges, type ValleyLayer } from '../lib/ridges';
 
 interface Props {
   seed?: number;
@@ -17,12 +17,19 @@ interface Props {
   height?: number;
   /** Move layers at different speeds while scrolling */
   parallax?: boolean;
+  /** 'generated' rolls random hills from the seed; 'swansea-valley' draws the view up Cwm Tawe */
+  scene?: 'generated' | 'swansea-valley';
 }
 
-const { seed = 7, layers = 5, tint, class: className, top, bottom, intro = false, height = 900, parallax = true } = Astro.props;
+const { seed = 7, layers = 5, tint, class: className, top, bottom, intro = false, height = 900, parallax = true, scene = 'generated' } = Astro.props;
 const W = 1600;
-const H = height;
-const ridges = makeRidges({ width: W, height: H, layers, seed, top, bottom });
+const valley = scene === 'swansea-valley';
+// The valley scene is drawn on a fixed 1600×900 canvas.
+const H = valley ? 900 : height;
+const ridges: (Omit<ValleyLayer, 'extras' | 'windows'> & Partial<ValleyLayer>)[] = valley
+  ? makeValleyRidges()
+  : makeRidges({ width: W, height: H, layers, seed, top, bottom });
+const n = ridges.length;
 const style = tint ? `--tint:${tint}` : undefined;
 ---
 <svg
@@ -34,9 +41,11 @@ const style = tint ? `--tint:${tint}` : undefined;
   data-parallax={parallax ? '' : undefined}
 >
   {ridges.map((r, i) => (
-    <g class="ridge" data-depth={r.depth.toFixed(3)} style={`--i:${i};--n:${layers}`}>
+    <g class="ridge" data-depth={r.depth.toFixed(3)} style={`--i:${i};--n:${n}`}>
       <g class="ridge-in">
         <path class="ridge-fill" d={r.fill} />
+        {r.extras?.map((d) => <path class="ridge-fill" d={d} />)}
+        {r.windows?.map(([x, y]) => <rect class="ridge-window" x={x} y={y} width="5" height="6" />)}
         {r.contours.map((d) => <path class="ridge-contour" d={d} />)}
       </g>
     </g>
@@ -68,6 +77,10 @@ const style = tint ? `--tint:${tint}` : undefined;
     stroke-width: 1.2;
     vector-effect: non-scaling-stroke;
   }
+  .ridge-window {
+    fill: #e5a15a;
+    opacity: 0.75;
+  }
   .intro .ridge-in {
     animation: rise 1.4s cubic-bezier(0.2, 0.7, 0.1, 1) both;
     animation-delay: calc((var(--n) - var(--i)) * 110ms);
@@ -77,6 +90,10 @@ const style = tint ? `--tint:${tint}` : undefined;
     to { transform: none; opacity: 1; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .intro .ridge-in { animation: none; }
+    .ridge-window {
+    fill: #e5a15a;
+    opacity: 0.75;
+  }
+  .intro .ridge-in { animation: none; }
   }
 </style>

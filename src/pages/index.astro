@@ -13,7 +13,7 @@ const talks = await getTalks();
 <BaseLayout overlayHeader>
   <section class="hero" data-anchor="top">
     <div class="sky" aria-hidden="true"></div>
-    <Ridges seed={11} layers={6} intro top={0.38} bottom={0.92} />
+    <Ridges scene="swansea-valley" intro />
     <div class="wrap hero-text">
       <h1>Lloyd Watkin</h1>
       <p>Notes on AI, code, trail running and building things, with 3D models and small tools to share.</p>
@@ -73,7 +73,7 @@ const talks = await getTalks();
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(60% 45% at 78% 72%, rgba(240, 190, 120, 0.28), transparent 70%),
+      radial-gradient(60% 45% at 62% 58%, rgba(240, 190, 120, 0.26), transparent 70%),
       linear-gradient(var(--sky-top) 0%, var(--night) 40%, var(--sky-horizon) 85%);
   }
   .hero-text {
