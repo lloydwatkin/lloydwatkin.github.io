@@ -78,4 +78,4 @@ The reveal.js decks from talks.evilprofessor.co.uk are kept at their original UR
 
 ## Deployment
 
-`.github/workflows/deploy.yml` builds and deploys on every push to `master`. In the repository settings, **Pages → Build and deployment → Source** must be set to **GitHub Actions**. The custom domain is set in `public/CNAME` and in the Pages settings.
+`.github/workflows/deploy.yml` builds and deploys on every push to `main`. In the repository settings, **Pages → Build and deployment → Source** must be set to **GitHub Actions**. The custom domain is set in `public/CNAME` and in the Pages settings.
