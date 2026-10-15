@@ -26,6 +26,8 @@ const { src, format, color = '#d9dee2', label } = Astro.props;
   import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
   class ModelViewer3D extends HTMLElement {
+    showStl?: (data: ArrayBuffer) => void;
+
     connectedCallback() {
       const stage = this.querySelector<HTMLElement>('.stage')!;
       const status = this.querySelector<HTMLElement>('.status')!;
@@ -65,14 +67,30 @@ const { src, format, color = '#d9dee2', label } = Astro.props;
       new ResizeObserver(resize).observe(stage);
       resize();
 
-      const frame = (object: THREE.Object3D) => {
-        // Sit the model on the floor, centred, and point the camera at it.
+      let current: THREE.Object3D | null = null;
+      let grid: THREE.GridHelper | null = null;
+
+      // Sit the model on the floor, centred, and point the camera at it.
+      // `keepView` (used when a generator swaps the model) keeps the current
+      // viewing angle and only moves the camera in or out to fit the new size.
+      const frame = (object: THREE.Object3D, keepView = false) => {
+        if (current) {
+          scene.remove(current);
+          current.traverse((o) => {
+            const m = o as THREE.Mesh;
+            m.geometry?.dispose();
+            (m.material as THREE.Material | undefined)?.dispose?.();
+          });
+        }
+        if (grid) { scene.remove(grid); grid.geometry.dispose(); (grid.material as THREE.Material).dispose(); }
+        current = object;
+        scene.add(object);
         const box = new THREE.Box3().setFromObject(object);
         const size = box.getSize(new THREE.Vector3());
         const centre = box.getCenter(new THREE.Vector3());
         object.position.sub(new THREE.Vector3(centre.x, box.min.y, centre.z));
         const radius = size.length() / 2;
-        const grid = new THREE.GridHelper(radius * 4, 20, 0x6f8f98, 0x3b5260);
+        grid = new THREE.GridHelper(radius * 4, 20, 0x6f8f98, 0x3b5260);
         (grid.material as THREE.Material).transparent = true;
         (grid.material as THREE.Material).opacity = 0.45;
         scene.add(grid);
@@ -80,11 +98,36 @@ const { src, format, color = '#d9dee2', label } = Astro.props;
         camera.near = dist / 100;
         camera.far = dist * 100;
         camera.updateProjectionMatrix();
+        const dir = keepView
+          ? camera.position.clone().sub(controls.target).normalize()
+          : null;
         home.target.set(0, size.y / 2, 0);
         home.pos.set(dist * 0.75, size.y / 2 + dist * 0.45, dist * 0.75);
-        camera.position.copy(home.pos);
         controls.target.copy(home.target);
+        if (dir) {
+          const homeDist = home.pos.distanceTo(home.target);
+          camera.position.copy(home.target).addScaledVector(dir, homeDist);
+        } else {
+          camera.position.copy(home.pos);
+        }
         controls.update();
+      };
+
+      const stlMesh = (geometry: THREE.BufferGeometry) => {
+        geometry.computeVertexNormals();
+        // STL files are usually Z-up (CAD convention); three.js is Y-up.
+        geometry.rotateX(-Math.PI / 2);
+        return new THREE.Mesh(
+          geometry,
+          new THREE.MeshStandardMaterial({ color: new THREE.Color(color), roughness: 0.55, metalness: 0.05, side: THREE.DoubleSide }),
+        );
+      };
+
+      let shown = 0;
+      /** Replace the model with STL data (ArrayBuffer), e.g. from a parametric generator. */
+      this.showStl = (data: ArrayBuffer) => {
+        frame(stlMesh(new STLLoader().parse(data)), shown++ > 0);
+        status.hidden = true;
       };
 
       const fail = (err: unknown) => {
@@ -94,20 +137,14 @@ const { src, format, color = '#d9dee2', label } = Astro.props;
 
       if (format === 'stl') {
         new STLLoader().load(src, (geometry) => {
-          geometry.computeVertexNormals();
-          // STL files are usually Z-up (CAD convention); three.js is Y-up.
-          geometry.rotateX(-Math.PI / 2);
-          const mesh = new THREE.Mesh(
-            geometry,
-            new THREE.MeshStandardMaterial({ color: new THREE.Color(color), roughness: 0.55, metalness: 0.05, side: THREE.DoubleSide }),
-          );
-          scene.add(mesh);
-          frame(mesh);
+          // A generator may already have shown its own model; don't overwrite it.
+          if (shown > 0) return;
+          shown++;
+          frame(stlMesh(geometry));
           status.hidden = true;
         }, undefined, fail);
       } else {
         new GLTFLoader().load(src, (gltf) => {
-          scene.add(gltf.scene);
           frame(gltf.scene);
           status.hidden = true;
         }, undefined, fail);
@@ -130,6 +167,8 @@ const { src, format, color = '#d9dee2', label } = Astro.props;
         controls.autoRotate = false;
         spinBtn.setAttribute('aria-pressed', 'false');
       });
+
+      this.dispatchEvent(new CustomEvent('viewer-ready'));
 
       renderer.setAnimationLoop(() => {
         controls.update();

@@ -1,0 +1,205 @@
+---
+// Parametric drill guide: a form that rebuilds the STL in the browser
+// (manifold-3d, WebAssembly) and swaps it into the 3D viewer as you type.
+import ModelViewer from '../ModelViewer.astro';
+import { parameters, defaults, fileName } from '../../lib/models/drill-guide.js';
+
+interface Props {
+  src: string;
+  color?: string;
+  label: string;
+}
+const { src, color, label } = Astro.props;
+---
+<drill-guide-generator>
+  <ModelViewer src={src} format="stl" color={color} label={label} />
+
+  <form class="gen" novalidate>
+    <div class="fields">
+      {parameters.map((p) => (
+        <div class="field">
+          <label for={`dg-${p.key}`}>{p.label}</label>
+          {p.options ? (
+            <select id={`dg-${p.key}`} name={p.key}>
+              {p.options.map((o) => <option value={o} selected={o === p.default}>{o[0].toUpperCase() + o.slice(1)}</option>)}
+            </select>
+          ) : (
+            <div class="num">
+              <input
+                id={`dg-${p.key}`}
+                name={p.key}
+                type="number"
+                inputmode="decimal"
+                min={p.min}
+                max={p.max}
+                step={p.step}
+                value={p.default}
+                aria-describedby={p.help ? `dg-${p.key}-help` : undefined}
+              />
+              {p.key !== 'feet' && <span class="unit">mm</span>}
+            </div>
+          )}
+          {p.help && <p class="help" id={`dg-${p.key}-help`}>{p.help}</p>}
+        </div>
+      ))}
+    </div>
+
+    <div class="actions">
+      <p class="summary" aria-live="polite">Loading the generator…</p>
+      <div class="buttons">
+        <button type="button" class="button" data-act="reset">Reset</button>
+        <button type="button" class="button" data-act="link">Copy link</button>
+        <a class="button primary" data-act="download" href={src} download={fileName(defaults)}>Download STL</a>
+      </div>
+    </div>
+  </form>
+</drill-guide-generator>
+
+<script>
+  import Module from 'manifold-3d';
+  import wasmUrl from 'manifold-3d/manifold.wasm?url';
+  import { parameters, defaults, normalise, buildDrillGuide, toStl, describe, fileName } from '../../lib/models/drill-guide.js';
+
+  type Viewer = HTMLElement & { showStl?: (data: ArrayBuffer) => void };
+
+  class DrillGuideGenerator extends HTMLElement {
+    async connectedCallback() {
+      const form = this.querySelector('form')!;
+      const summary = this.querySelector<HTMLElement>('.summary')!;
+      const download = this.querySelector<HTMLAnchorElement>('[data-act="download"]')!;
+      const viewer = this.querySelector<Viewer>('model-viewer-3d')!;
+      let blobUrl = '';
+
+      // Start from any parameters in the URL, so a link reproduces a design.
+      const query = new URLSearchParams(location.search);
+      for (const p of parameters) {
+        const v = query.get(p.key);
+        if (v != null) (form.elements.namedItem(p.key) as HTMLInputElement).value = v;
+      }
+
+      const read = () => Object.fromEntries(parameters.map((p) => [p.key, (form.elements.namedItem(p.key) as HTMLInputElement).value]));
+
+      let wasm: Awaited<ReturnType<typeof Module>>;
+      try {
+        wasm = await Module({ locateFile: () => wasmUrl });
+        wasm.setup();
+      } catch (err) {
+        console.error(err);
+        summary.textContent = 'The generator could not start in this browser. The download is the default 16 mm guide.';
+        return;
+      }
+      await customElements.whenDefined('model-viewer-3d');
+
+      const regenerate = () => {
+        const raw = read();
+        const p = normalise(raw);
+        let stl: ArrayBuffer;
+        try {
+          const guide = buildDrillGuide(wasm, p);
+          stl = toStl(guide);
+          guide.delete();
+        } catch (err) {
+          console.error(err);
+          summary.textContent = 'Those numbers do not make a valid shape. Try different values.';
+          return;
+        }
+        viewer.showStl?.(stl);
+
+        if (blobUrl) URL.revokeObjectURL(blobUrl);
+        blobUrl = URL.createObjectURL(new Blob([stl], { type: 'model/stl' }));
+        download.href = blobUrl;
+        download.download = fileName(p);
+
+        const d = describe(p);
+        const clamped = parameters.some((q) => !q.options && raw[q.key] !== '' && Number(raw[q.key]) !== p[q.key]);
+        summary.textContent =
+          `${+d.holeD.toFixed(2)} mm hole · ${+d.body.toFixed(2)} mm body · ${d.height} mm high · ${+d.footprint.toFixed(2)} mm across the feet` +
+          (clamped ? ' (some values were out of range and have been limited)' : '');
+
+        // Keep the address bar in step, listing only what differs from the defaults.
+        const q = new URLSearchParams();
+        for (const k of parameters.map((x) => x.key)) if (p[k] !== defaults[k]) q.set(k, String(p[k]));
+        history.replaceState(null, '', q.size ? `?${q}` : location.pathname);
+      };
+
+      let timer = 0;
+      form.addEventListener('input', () => {
+        clearTimeout(timer);
+        timer = window.setTimeout(regenerate, 120);
+      });
+      form.addEventListener('submit', (e) => e.preventDefault());
+
+      this.addEventListener('click', async (e) => {
+        const act = (e.target as HTMLElement).closest<HTMLElement>('[data-act]')?.dataset.act;
+        if (act === 'reset') {
+          for (const p of parameters) (form.elements.namedItem(p.key) as HTMLInputElement).value = String(p.default);
+          regenerate();
+        } else if (act === 'link') {
+          const btn = e.target as HTMLButtonElement;
+          try {
+            await navigator.clipboard.writeText(location.href);
+            btn.textContent = 'Copied';
+          } catch {
+            btn.textContent = 'Copy failed';
+          }
+          setTimeout(() => (btn.textContent = 'Copy link'), 1800);
+        }
+      });
+
+      regenerate();
+    }
+  }
+  customElements.define('drill-guide-generator', DrillGuideGenerator);
+</script>
+
+<style>
+  drill-guide-generator { display: block; }
+  .gen {
+    margin-top: 1.25rem;
+    padding: 1.5rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    display: grid;
+    gap: 1.5rem;
+  }
+  .fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+    gap: 1.25rem 1.5rem;
+  }
+  .field { display: grid; align-content: start; gap: 0.35rem; }
+  label { font: 700 0.95rem/1.2 var(--font-display); }
+  .num { display: flex; align-items: center; gap: 0.5rem; }
+  input, select {
+    font: 500 1.1rem/1.2 var(--font-display);
+    font-variant-numeric: tabular-nums;
+    padding: 0.5rem 0.7rem;
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    color: var(--ink);
+    width: 100%;
+    min-width: 0;
+  }
+  .num input { width: 7.5rem; }
+  input:focus, select:focus { border-color: var(--focus); outline: none; box-shadow: 0 0 0 3px color-mix(in oklab, var(--focus) 30%, transparent); }
+  .unit { color: var(--muted); font-family: var(--font-display); }
+  .help { margin: 0; font-size: 0.85rem; line-height: 1.4; color: var(--muted); font-family: var(--font-display); }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+  }
+  .summary { margin: 0; font-family: var(--font-display); font-variant-numeric: tabular-nums; color: var(--ink-soft); }
+  .buttons { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  @media (max-width: 520px) {
+    .gen { padding: 1rem; }
+    .fields { grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .num input { width: 100%; }
+  }
+</style>

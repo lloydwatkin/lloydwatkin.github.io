@@ -2,6 +2,7 @@
 import { render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ModelViewer from '../../components/ModelViewer.astro';
+import DrillGuideGenerator from '../../components/generators/DrillGuideGenerator.astro';
 import { getModels, formatDate } from '../../lib/content';
 import { getCategory } from '../../data/categories';
 
@@ -12,7 +13,7 @@ export async function getStaticPaths() {
 
 const { model } = Astro.props;
 const { Content } = await render(model);
-const { title, description, file, format, color, license, printSettings, date } = model.data;
+const { title, description, file, format, color, license, printSettings, date, generator } = model.data;
 const cat = getCategory(model.data.category);
 const fileName = file.split('/').pop();
 ---
@@ -24,12 +25,16 @@ const fileName = file.split('/').pop();
       <p class="desc">{description}</p>
     </header>
 
-    <ModelViewer src={file} format={format} color={color} label={title} />
+    {generator === 'drill-guide'
+      ? <DrillGuideGenerator src={file} color={color} label={title} />
+      : <ModelViewer src={file} format={format} color={color} label={title} />}
 
     <div class="cols">
       <div class="prose"><Content /></div>
       <aside>
-        <a class="button primary" href={file} download={fileName}>Download {format.toUpperCase()}</a>
+        {generator
+          ? <a class="button" href={file} download={fileName}>Download default {format.toUpperCase()}</a>
+          : <a class="button primary" href={file} download={fileName}>Download {format.toUpperCase()}</a>}
         <dl>
           <dt>Published</dt><dd>{formatDate(date)}</dd>
           <dt>Licence</dt><dd>{license}</dd>

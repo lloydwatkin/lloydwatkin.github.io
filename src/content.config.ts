@@ -51,6 +51,12 @@ const models = defineCollection({
     license: z.string().default('CC BY 4.0'),
     category: z.enum(categorySlugs).default('diy'),
     printSettings: z.record(z.string(), z.string()).optional(),
+    /**
+     * Parametric models: name of a generator in src/components/generators/.
+     * The page then shows a form that rebuilds the model in the browser, and
+     * `file` is the default version.
+     */
+    generator: z.enum(['drill-guide']).optional(),
     draft: z.boolean().default(false),
   }),
 });
