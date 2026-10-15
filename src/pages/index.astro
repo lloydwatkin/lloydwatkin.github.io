@@ -77,7 +77,9 @@ const talks = await getTalks();
 <style>
   .hero {
     position: relative;
-    height: max(36rem, 100svh);
+    /* Fill the window, but never get much taller than the 16:10 valley scene
+       is wide, or the hills have to be cropped at the sides to fit. */
+    height: max(36rem, min(100svh, 62.5vw));
     overflow: hidden;
     color: #f2f6f4;
     display: flex;
