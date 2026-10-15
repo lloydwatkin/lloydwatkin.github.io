@@ -56,7 +56,7 @@ const models = defineCollection({
      * The page then shows a form that rebuilds the model in the browser, and
      * `file` is the default version.
      */
-    generator: z.enum(['drill-guide', 'board-joint']).optional(),
+    generator: z.enum(['drill-guide', 'board-joint', 'hanging-rail']).optional(),
     draft: z.boolean().default(false),
   }),
 });
