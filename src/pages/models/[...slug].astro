@@ -1,0 +1,60 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ModelViewer from '../../components/ModelViewer.astro';
+import { getModels, formatDate } from '../../lib/content';
+import { getCategory } from '../../data/categories';
+
+export async function getStaticPaths() {
+  const models = await getModels();
+  return models.map((model) => ({ params: { slug: model.id }, props: { model } }));
+}
+
+const { model } = Astro.props;
+const { Content } = await render(model);
+const { title, description, file, format, color, license, printSettings, date } = model.data;
+const cat = getCategory(model.data.category);
+const fileName = file.split('/').pop();
+---
+<BaseLayout title={title} description={description}>
+  <article class="wrap model" style={`--cat:${cat.color}`}>
+    <header>
+      <a class="back" href="/models/">All models</a>
+      <h1>{title}</h1>
+      <p class="desc">{description}</p>
+    </header>
+
+    <ModelViewer src={file} format={format} color={color} label={title} />
+
+    <div class="cols">
+      <div class="prose"><Content /></div>
+      <aside>
+        <a class="button primary" href={file} download={fileName}>Download {format.toUpperCase()}</a>
+        <dl>
+          <dt>Published</dt><dd>{formatDate(date)}</dd>
+          <dt>Licence</dt><dd>{license}</dd>
+          <dt>Category</dt><dd><a href={`/category/${cat.slug}/`}>{cat.name}</a></dd>
+          {printSettings && Object.entries(printSettings).map(([k, v]) => (<><dt>{k}</dt><dd>{v}</dd></>))}
+        </dl>
+      </aside>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .model { margin-top: 2rem; }
+  .back { font-weight: 600; }
+  h1 { font-size: var(--step-4); margin-top: 1rem; font-stretch: 85%; }
+  .desc { font-family: var(--font-body); font-size: var(--step-1); color: var(--ink-soft); max-width: 50ch; margin: 0.8rem 0 2rem; }
+  .cols {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 18rem;
+    gap: 3rem;
+    margin-top: 2.5rem;
+  }
+  aside { display: grid; align-content: start; gap: 1.5rem; }
+  dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 1rem; font-size: 0.95rem; }
+  dt { color: var(--muted); }
+  dd { margin: 0; }
+  @media (max-width: 760px) { .cols { grid-template-columns: 1fr; } aside { order: -1; } }
+</style>

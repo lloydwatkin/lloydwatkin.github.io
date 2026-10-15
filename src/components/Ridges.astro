@@ -1,0 +1,82 @@
+---
+// Layered, contour-lined ridgelines. Far layers drift slower than near ones
+// as the page scrolls (parallax). Colours come from CSS custom properties so
+// the same component can be tinted per category.
+import { makeRidges } from '../lib/ridges';
+
+interface Props {
+  seed?: number;
+  layers?: number;
+  /** Tint mixed into the ridges, e.g. a category colour */
+  tint?: string;
+  class?: string;
+  top?: number;
+  bottom?: number;
+  intro?: boolean;
+  /** viewBox height; match roughly the aspect of the container (width is 1600) */
+  height?: number;
+  /** Move layers at different speeds while scrolling */
+  parallax?: boolean;
+}
+
+const { seed = 7, layers = 5, tint, class: className, top, bottom, intro = false, height = 900, parallax = true } = Astro.props;
+const W = 1600;
+const H = height;
+const ridges = makeRidges({ width: W, height: H, layers, seed, top, bottom });
+const style = tint ? `--tint:${tint}` : undefined;
+---
+<svg
+  class:list={['ridges', className, { intro }]}
+  viewBox={`0 0 ${W} ${H}`}
+  preserveAspectRatio="xMidYMax slice"
+  aria-hidden="true"
+  style={style}
+  data-parallax={parallax ? '' : undefined}
+>
+  {ridges.map((r, i) => (
+    <g class="ridge" data-depth={r.depth.toFixed(3)} style={`--i:${i};--n:${layers}`}>
+      <g class="ridge-in">
+        <path class="ridge-fill" d={r.fill} />
+        {r.contours.map((d) => <path class="ridge-contour" d={d} />)}
+      </g>
+    </g>
+  ))}
+</svg>
+
+<style>
+  .ridges {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    pointer-events: none;
+    --tint: var(--haze);
+  }
+  .ridge {
+    will-change: transform;
+    /* Far layers are lighter (atmospheric perspective), near layers darker. */
+    --mix: calc(var(--i) / (var(--n) - 1) * 100%);
+  }
+  .ridge-fill {
+    fill: color-mix(in oklab, var(--ridge-near) var(--mix), color-mix(in oklab, var(--tint) 35%, var(--ridge-far)));
+  }
+  .ridge-contour {
+    fill: none;
+    stroke: color-mix(in oklab, var(--tint) 30%, white);
+    stroke-opacity: calc(0.22 - var(--i) * 0.03);
+    stroke-width: 1.2;
+    vector-effect: non-scaling-stroke;
+  }
+  .intro .ridge-in {
+    animation: rise 1.4s cubic-bezier(0.2, 0.7, 0.1, 1) both;
+    animation-delay: calc((var(--n) - var(--i)) * 110ms);
+  }
+  @keyframes rise {
+    from { transform: translateY(120px); opacity: 0; }
+    to { transform: none; opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .intro .ridge-in { animation: none; }
+  }
+</style>

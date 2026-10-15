@@ -1,0 +1,174 @@
+---
+// Interactive 3D viewer for STL / GLB / GLTF files (three.js, loaded only on
+// pages that use it). Drag to orbit, scroll or pinch to zoom.
+interface Props {
+  src: string;
+  format: 'stl' | 'glb' | 'gltf';
+  color?: string;
+  label: string;
+}
+const { src, format, color = '#d9dee2', label } = Astro.props;
+---
+<model-viewer-3d class="viewer" data-src={src} data-format={format} data-color={color}>
+  <div class="stage" role="img" aria-label={`3D preview of ${label}. Drag to rotate, scroll to zoom.`}></div>
+  <p class="status" aria-live="polite">Loading model…</p>
+  <div class="controls">
+    <button type="button" data-action="reset">Reset view</button>
+    <button type="button" data-action="spin" aria-pressed="true">Spin</button>
+    <button type="button" data-action="fullscreen">Full screen</button>
+  </div>
+</model-viewer-3d>
+
+<script>
+  import * as THREE from 'three';
+  import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+  import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
+  import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+
+  class ModelViewer3D extends HTMLElement {
+    connectedCallback() {
+      const stage = this.querySelector<HTMLElement>('.stage')!;
+      const status = this.querySelector<HTMLElement>('.status')!;
+      const { src = '', format = 'stl', color = '#d9dee2' } = this.dataset;
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      stage.appendChild(renderer.domElement);
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 10000);
+      scene.add(new THREE.HemisphereLight(0xe8f0ff, 0x30404a, 1.6));
+      const key = new THREE.DirectionalLight(0xffffff, 2.2);
+      key.position.set(1, 2, 1.5);
+      scene.add(key);
+      const rim = new THREE.DirectionalLight(0xffc890, 0.9);
+      rim.position.set(-2, 1, -1.5);
+      scene.add(rim);
+
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.autoRotate = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+      controls.autoRotateSpeed = 1.2;
+      const spinBtn = this.querySelector<HTMLButtonElement>('[data-action="spin"]')!;
+      spinBtn.setAttribute('aria-pressed', String(controls.autoRotate));
+
+      let home = { pos: new THREE.Vector3(), target: new THREE.Vector3() };
+
+      const resize = () => {
+        const w = stage.clientWidth;
+        const h = stage.clientHeight;
+        renderer.setSize(w, h, false);
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+      };
+      new ResizeObserver(resize).observe(stage);
+      resize();
+
+      const frame = (object: THREE.Object3D) => {
+        // Sit the model on the floor, centred, and point the camera at it.
+        const box = new THREE.Box3().setFromObject(object);
+        const size = box.getSize(new THREE.Vector3());
+        const centre = box.getCenter(new THREE.Vector3());
+        object.position.sub(new THREE.Vector3(centre.x, box.min.y, centre.z));
+        const radius = size.length() / 2;
+        const grid = new THREE.GridHelper(radius * 4, 20, 0x6f8f98, 0x3b5260);
+        (grid.material as THREE.Material).transparent = true;
+        (grid.material as THREE.Material).opacity = 0.45;
+        scene.add(grid);
+        const dist = radius / Math.sin((camera.fov * Math.PI) / 360) * 1.1;
+        camera.near = dist / 100;
+        camera.far = dist * 100;
+        camera.updateProjectionMatrix();
+        home.target.set(0, size.y / 2, 0);
+        home.pos.set(dist * 0.75, size.y / 2 + dist * 0.45, dist * 0.75);
+        camera.position.copy(home.pos);
+        controls.target.copy(home.target);
+        controls.update();
+      };
+
+      const fail = (err: unknown) => {
+        console.error(err);
+        status.textContent = 'The model could not be loaded. Use the download link below to get the file.';
+      };
+
+      if (format === 'stl') {
+        new STLLoader().load(src, (geometry) => {
+          geometry.computeVertexNormals();
+          // STL files are usually Z-up (CAD convention); three.js is Y-up.
+          geometry.rotateX(-Math.PI / 2);
+          const mesh = new THREE.Mesh(
+            geometry,
+            new THREE.MeshStandardMaterial({ color: new THREE.Color(color), roughness: 0.55, metalness: 0.05, side: THREE.DoubleSide }),
+          );
+          scene.add(mesh);
+          frame(mesh);
+          status.hidden = true;
+        }, undefined, fail);
+      } else {
+        new GLTFLoader().load(src, (gltf) => {
+          scene.add(gltf.scene);
+          frame(gltf.scene);
+          status.hidden = true;
+        }, undefined, fail);
+      }
+
+      this.addEventListener('click', (e) => {
+        const action = (e.target as HTMLElement).closest('button')?.dataset.action;
+        if (action === 'reset') {
+          camera.position.copy(home.pos);
+          controls.target.copy(home.target);
+        } else if (action === 'spin') {
+          controls.autoRotate = !controls.autoRotate;
+          spinBtn.setAttribute('aria-pressed', String(controls.autoRotate));
+        } else if (action === 'fullscreen') {
+          if (document.fullscreenElement) document.exitFullscreen();
+          else this.requestFullscreen?.();
+        }
+      });
+      controls.addEventListener('start', () => {
+        controls.autoRotate = false;
+        spinBtn.setAttribute('aria-pressed', 'false');
+      });
+
+      renderer.setAnimationLoop(() => {
+        controls.update();
+        renderer.render(scene, camera);
+      });
+    }
+  }
+  customElements.define('model-viewer-3d', ModelViewer3D);
+</script>
+
+<style>
+  .viewer {
+    display: block;
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background:
+      radial-gradient(80% 70% at 50% 35%, #2c4656, transparent 75%),
+      linear-gradient(#1b2d3a, var(--ridge-near));
+    aspect-ratio: 16 / 10;
+    color: #e6eeec;
+  }
+  .viewer:fullscreen { aspect-ratio: auto; border-radius: 0; }
+  .stage { position: absolute; inset: 0; cursor: grab; }
+  .stage:active { cursor: grabbing; }
+  .stage :global(canvas) { display: block; width: 100% !important; height: 100% !important; }
+  .status { position: absolute; inset: 0; display: grid; place-items: center; margin: 0; padding: 1rem; text-align: center; color: #b8c8c8; }
+  .status[hidden] { display: none; }
+  .controls { position: absolute; left: 0.8rem; bottom: 0.8rem; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .controls button {
+    font: 600 0.85rem/1 var(--font-display);
+    color: inherit;
+    background: rgba(10, 20, 28, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    padding: 0.5rem 0.8rem;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+  }
+  .controls button:hover { background: rgba(10, 20, 28, 0.8); }
+  .controls button[aria-pressed='true'] { border-color: #e5772e; }
+</style>

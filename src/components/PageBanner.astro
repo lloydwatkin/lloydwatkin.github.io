@@ -1,0 +1,53 @@
+---
+// Dark banner with ridges at the top of inner pages; optionally tinted.
+import Ridges from './Ridges.astro';
+
+interface Props {
+  tint?: string;
+  seed?: number;
+  size?: 'small' | 'large';
+}
+const { tint, seed = 3, size = 'small' } = Astro.props;
+---
+<section class:list={['banner', size]} data-anchor="top" style={tint ? `--cat:${tint}` : undefined}>
+  <div class="sky" aria-hidden="true"></div>
+  <Ridges seed={seed} layers={4} tint={tint} top={0.48} bottom={0.92} height={size === 'large' ? 800 : 520} />
+  <div class="wrap banner-content">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .banner {
+    position: relative;
+    overflow: hidden;
+    color: #f1f5f3;
+    min-height: 26rem;
+    display: flex;
+    align-items: flex-end;
+    padding-top: 7rem;
+  }
+  .banner.large { min-height: min(80vh, 44rem); }
+  .sky {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(120% 70% at 75% 110%, color-mix(in oklab, var(--cat, var(--sky-horizon)) 40%, var(--sky-horizon)) 0%, transparent 70%),
+      linear-gradient(var(--sky-top), var(--night) 55%, var(--sky-horizon));
+  }
+  .banner-content {
+    position: relative;
+    z-index: 2;
+    padding-bottom: 2.5rem;
+  }
+  /* Keep text legible over the near ridge */
+  .banner::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 55%;
+    background: linear-gradient(transparent, color-mix(in oklab, var(--ridge-near) 75%, transparent));
+    z-index: 1;
+    pointer-events: none;
+  }
+</style>

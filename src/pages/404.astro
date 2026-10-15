@@ -1,0 +1,16 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageBanner from '../components/PageBanner.astro';
+---
+<BaseLayout title="Page not found" overlayHeader>
+  <PageBanner seed={404} size="large">
+    <h1 class="page-title">Off the trail</h1>
+    <p class="page-sub">There's no page at this address. It may have moved when the site was rebuilt.</p>
+    <p class="links"><a href="/">Go to the home page</a> or <a href="/blog/">browse all writing</a>.</p>
+  </PageBanner>
+</BaseLayout>
+
+<style>
+  .links { margin-top: 1.5rem; color: #c9d7d6; }
+  .links a { color: #fff; }
+</style>

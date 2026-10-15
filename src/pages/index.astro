@@ -1,0 +1,132 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Ridges from '../components/Ridges.astro';
+import PostList from '../components/PostList.astro';
+import CategoryTrail from '../components/CategoryTrail.astro';
+import { getPosts, getModels, getTools, getTalks, formatDate } from '../lib/content';
+
+const posts = (await getPosts()).slice(0, 6);
+const models = (await getModels()).slice(0, 3);
+const tools = (await getTools()).slice(0, 3);
+const talks = await getTalks();
+---
+<BaseLayout overlayHeader>
+  <section class="hero" data-anchor="top">
+    <div class="sky" aria-hidden="true"></div>
+    <Ridges seed={11} layers={6} intro top={0.38} bottom={0.92} />
+    <div class="wrap hero-text">
+      <h1>Lloyd Watkin</h1>
+      <p>Notes on AI, code, trail running and building things, with 3D models and small tools to share.</p>
+    </div>
+  </section>
+
+  <div class="wrap section">
+    <CategoryTrail />
+  </div>
+
+  <section class="wrap section" aria-labelledby="latest">
+    <div class="section-head">
+      <h2 id="latest">Latest writing</h2>
+      <a href="/blog/">All posts</a>
+    </div>
+    {posts.length ? <PostList posts={posts} headingLevel="h3" /> : <p class="empty">Nothing published yet.</p>}
+  </section>
+
+  <section class="wrap section shelf" aria-label="More on this site">
+    <div>
+      <div class="section-head"><h2>3D models</h2><a href="/models/">All models</a></div>
+      <ul class="mini">
+        {models.map((m) => (
+          <li><a href={`/models/${m.id}/`}>{m.data.title}</a><span>{m.data.description}</span></li>
+        ))}
+      </ul>
+    </div>
+    <div>
+      <div class="section-head"><h2>Tools</h2><a href="/tools/">All tools</a></div>
+      <ul class="mini">
+        {tools.map((t) => (
+          <li><a href={`/tools/${t.id}/`}>{t.data.title}</a><span>{t.data.description}</span></li>
+        ))}
+      </ul>
+    </div>
+    <div>
+      <div class="section-head"><h2>Talks</h2><a href="/talks/">All talks</a></div>
+      <ul class="mini">
+        {talks.slice(0, 3).map((t) => (
+          <li><a href={`/${t.id}/`}>{t.data.title}</a><span>{t.data.date && formatDate(t.data.date, t.data.datePrecision)}</span></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    position: relative;
+    height: max(36rem, 100svh);
+    overflow: hidden;
+    color: #f2f6f4;
+    display: flex;
+    align-items: flex-end;
+  }
+  .sky {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(60% 45% at 78% 72%, rgba(240, 190, 120, 0.28), transparent 70%),
+      linear-gradient(var(--sky-top) 0%, var(--night) 40%, var(--sky-horizon) 85%);
+  }
+  .hero-text {
+    position: relative;
+    z-index: 2;
+    padding-bottom: clamp(3rem, 9vh, 6rem);
+  }
+  .hero h1 {
+    font-size: clamp(3.6rem, 13vw, 11.5rem);
+    font-weight: 800;
+    font-stretch: 75%;
+    line-height: 0.86;
+    letter-spacing: -0.012em;
+    max-width: 8ch;
+    animation: settle 1.6s cubic-bezier(0.2, 0.7, 0.1, 1) 0.3s both;
+  }
+  .hero p {
+    margin: 1.4rem 0 0;
+    font-size: var(--step-1);
+    max-width: 34ch;
+    color: #c9d7d6;
+    line-height: 1.4;
+    animation: settle 1.6s cubic-bezier(0.2, 0.7, 0.1, 1) 0.5s both;
+  }
+  @keyframes settle {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero h1, .hero p { animation: none; }
+  }
+
+  .section { margin-top: clamp(3rem, 7vw, 5.5rem); }
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+  }
+  .section-head h2 { font-size: var(--step-3); }
+  .section-head a { font-weight: 600; white-space: nowrap; }
+  .empty { color: var(--muted); }
+
+  .shelf {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 3rem;
+  }
+  .shelf .section-head h2 { font-size: var(--step-2); }
+  .mini { list-style: none; margin: 0; padding: 0; }
+  .mini li { padding-block: 0.8rem; border-top: 1px solid var(--line); display: grid; gap: 0.15rem; }
+  .mini a { font-weight: 650; color: var(--ink); text-decoration: none; font-size: 1.08rem; }
+  .mini a:hover { color: var(--link); text-decoration: underline; }
+  .mini span { color: var(--muted); font-size: 0.93rem; }
+</style>

@@ -1,0 +1,66 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getCategory } from '../data/categories';
+import { formatDate } from '../lib/content';
+
+interface Props {
+  posts: CollectionEntry<'posts'>[];
+  showCategory?: boolean;
+  headingLevel?: 'h2' | 'h3';
+}
+const { posts, showCategory = true, headingLevel: H = 'h2' } = Astro.props;
+---
+<ol class="post-list">
+  {posts.map((post) => {
+    const cat = getCategory(post.data.category);
+    return (
+      <li class="post" style={`--cat:${cat.color}`}>
+        <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+        <div class="post-body">
+          <H class="post-title"><a href={`/blog/${post.id}/`}>{post.data.title}</a></H>
+          <p class="post-desc">{post.data.description}</p>
+          {showCategory && (
+            <a class="post-cat" href={`/category/${cat.slug}/`}><span class="swatch" />{cat.name}</a>
+          )}
+          {post.data.draft && <span class="draft">Draft</span>}
+        </div>
+      </li>
+    );
+  })}
+</ol>
+
+<style>
+  .post-list { list-style: none; margin: 0; padding: 0; }
+  .post {
+    display: grid;
+    grid-template-columns: 10rem 1fr;
+    gap: 0.4rem 2rem;
+    padding-block: 1.6rem;
+    border-top: 1px solid var(--line);
+    position: relative;
+  }
+  .post:last-child { border-bottom: 1px solid var(--line); }
+  time { color: var(--muted); font-size: 0.95rem; padding-top: 0.3rem; font-variant-numeric: tabular-nums; }
+  .post-title { font-size: var(--step-2); font-weight: 650; }
+  .post-title a { color: var(--ink); text-decoration: none; background-image: linear-gradient(var(--cat), var(--cat)); background-size: 0 2px; background-repeat: no-repeat; background-position: 0 100%; transition: background-size 0.25s ease; }
+  .post-title a:hover, .post-title a:focus-visible { background-size: 100% 2px; }
+  .post-title a::after { content: ''; position: absolute; inset: 0; }
+  .post-desc { margin: 0.45rem 0 0.7rem; color: var(--ink-soft); font-family: var(--font-body); font-size: 1.06rem; max-width: 60ch; }
+  .post-cat {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    text-decoration: none;
+  }
+  .post-cat:hover { color: var(--ink); }
+  .draft { margin-left: 0.8rem; font-size: 0.85rem; color: var(--focus); font-weight: 600; }
+  @media (max-width: 640px) {
+    .post { grid-template-columns: 1fr; }
+    time { padding-top: 0; }
+  }
+</style>

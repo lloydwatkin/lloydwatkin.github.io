@@ -1,0 +1,19 @@
+---
+// Legacy talk URLs, e.g. /intro-to-xmpp/ — kept identical to the old site.
+import { getCollection } from 'astro:content';
+import TalkLayout from '../../layouts/TalkLayout.astro';
+
+export async function getStaticPaths() {
+  const talks = await getCollection('talks');
+  return talks.map((talk) => ({ params: { talk: talk.id }, props: { talk } }));
+}
+
+const { talk } = Astro.props;
+---
+<TalkLayout
+  title={talk.data.title}
+  description={talk.data.description}
+  theme={talk.data.theme}
+  extraOptions={talk.data.extraOptions}
+  html={talk.data.html}
+/>

@@ -1,0 +1,26 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getTools } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const tools = await getTools();
+  return tools.map((tool) => ({ params: { slug: tool.id }, props: { tool } }));
+}
+
+const { tool } = Astro.props;
+const { Content } = await render(tool);
+---
+<BaseLayout title={tool.data.title} description={tool.data.description}>
+  <article class="narrow tool">
+    <a class="back" href="/tools/">All tools</a>
+    <h1>{tool.data.title}</h1>
+    <div class="prose"><Content /></div>
+  </article>
+</BaseLayout>
+
+<style>
+  .tool { margin-top: 2rem; }
+  .back { font-weight: 600; }
+  h1 { font-size: var(--step-4); font-stretch: 85%; margin: 1rem 0 1.5rem; }
+</style>

@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageBanner from '../../components/PageBanner.astro';
+import { getTalks, formatDate } from '../../lib/content';
+
+const talks = await getTalks();
+---
+<BaseLayout title="Talks" description="Slides from talks I have given, mostly about XMPP and realtime web applications." overlayHeader>
+  <PageBanner seed={2013} tint="#5b8def">
+    <h1 class="page-title">Talks</h1>
+    <p class="page-sub">Slides from conference talks and meetups, mostly about XMPP and realtime web apps. Use the arrow keys to move through a deck.</p>
+  </PageBanner>
+  <div class="wrap">
+    <ol class="talks">
+      {talks.map((t) => (
+        <li>
+          <time datetime={t.data.date?.toISOString()}>{t.data.date ? formatDate(t.data.date, t.data.datePrecision) : ''}</time>
+          <div>
+            <h2><a href={`/${t.id}/`}>{t.data.title}</a></h2>
+            <p>{t.data.summary ?? t.data.description}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</BaseLayout>
+
+<style>
+  .talks { list-style: none; padding: 0; margin: 3.5rem 0 0; }
+  .talks li {
+    display: grid;
+    grid-template-columns: 10rem 1fr;
+    gap: 0.3rem 2rem;
+    padding-block: 1.4rem;
+    border-top: 1px solid var(--line);
+    position: relative;
+  }
+  .talks li:last-child { border-bottom: 1px solid var(--line); }
+  time { color: var(--muted); padding-top: 0.25rem; font-variant-numeric: tabular-nums; }
+  .talks h2 { font-size: var(--step-1); font-weight: 650; }
+  h2 a { color: var(--ink); text-decoration: none; }
+  h2 a::after { content: ''; position: absolute; inset: 0; }
+  li:hover h2 a { color: var(--link); text-decoration: underline; }
+  .talks p { margin: 0.35rem 0 0; color: var(--ink-soft); font-family: var(--font-body); }
+  @media (max-width: 640px) { .talks li { grid-template-columns: 1fr; } }
+</style>

@@ -1,0 +1,30 @@
+---
+// Layout for static Markdown/MDX pages in src/pages, e.g. about.md:
+//   ---
+//   layout: ../layouts/PageLayout.astro
+//   title: About
+//   description: ...
+//   ---
+import BaseLayout from './BaseLayout.astro';
+import PageBanner from '../components/PageBanner.astro';
+
+interface Props {
+  frontmatter?: { title: string; description?: string; intro?: string };
+  title?: string;
+  description?: string;
+}
+const fm = Astro.props.frontmatter ?? { title: Astro.props.title ?? '', description: Astro.props.description };
+---
+<BaseLayout title={fm.title} description={fm.description} overlayHeader>
+  <PageBanner seed={fm.title.length * 17}>
+    <h1 class="page-title">{fm.title}</h1>
+    {fm.intro && <p class="page-sub">{fm.intro}</p>}
+  </PageBanner>
+  <div class="narrow prose page-body">
+    <slot />
+  </div>
+</BaseLayout>
+
+<style>
+  .page-body { margin-top: 3.5rem; }
+</style>

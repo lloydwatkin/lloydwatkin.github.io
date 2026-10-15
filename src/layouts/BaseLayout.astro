@@ -1,0 +1,213 @@
+---
+import '../styles/global.css';
+import { site } from '../data/site';
+import Ridges from '../components/Ridges.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Header sits over a dark hero/banner instead of the page background */
+  overlayHeader?: boolean;
+  image?: string;
+}
+
+const { title, description = site.description, overlayHeader = false, image } = Astro.props;
+const fullTitle = title ? `${title} | ${site.title}` : `${site.author} | ${site.title}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const path = Astro.url.pathname;
+const isCurrent = (href: string) => path === href || (href !== '/' && path.startsWith(href));
+const year = new Date().getFullYear();
+---
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title={site.title} href="/rss.xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:title" content={title ?? site.author} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:type" content="website" />
+    {image && <meta property="og:image" content={new URL(image, Astro.site)} />}
+    <meta name="theme-color" content="#13212d" />
+    <script is:inline>
+      try {
+        const t = localStorage.getItem('theme');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class:list={['site-header', { overlay: overlayHeader }]}>
+      <div class="wrap header-inner">
+        <a class="wordmark" href="/" aria-label={`${site.title}, home`}>
+          <svg viewBox="0 0 32 20" width="32" height="20" aria-hidden="true">
+            <path d="M1 18 L9 6 L14 12 L20 3 L31 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+          </svg>
+          <span>{site.title}</span>
+        </a>
+        <nav aria-label="Main">
+          <ul>
+            {site.nav.map((item) => (
+              <li><a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a></li>
+            ))}
+          </ul>
+        </nav>
+        <button class="theme-toggle" type="button" aria-label="Switch colour theme" title="Switch colour theme">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9Z" fill="currentColor" /></svg>
+        </button>
+      </div>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-ridges">
+        <Ridges seed={23} layers={3} top={0.45} bottom={0.85} height={260} parallax={false} />
+      </div>
+      <div class="footer-base"><div class="wrap footer-inner">
+        <p class="footer-name">{site.author}</p>
+        <ul class="footer-links">
+          {site.nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+          {site.social.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+        </ul>
+        <p class="footer-small">&copy; {year} {site.author}. Built with Astro, hosted on GitHub Pages.</p>
+      </div></div>
+    </footer>
+
+    <script>
+      // Theme toggle: cycles to the opposite of whatever is currently showing.
+      const btn = document.querySelector<HTMLButtonElement>('.theme-toggle');
+      btn?.addEventListener('click', () => {
+        const root = document.documentElement;
+        const current =
+          root.dataset.theme ?? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        const next = current === 'dark' ? 'light' : 'dark';
+        root.dataset.theme = next;
+        try { localStorage.setItem('theme', next); } catch {}
+      });
+
+      // Parallax: far ridge layers lag behind the scroll, near ones keep pace.
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+      const scenes = [...document.querySelectorAll<SVGSVGElement>('[data-parallax]')].map((svg) => ({
+        svg,
+        host: svg.parentElement as HTMLElement,
+        layers: [...svg.querySelectorAll<SVGGElement>('.ridge')].map((g) => ({
+          g,
+          depth: Number(g.dataset.depth ?? 0),
+        })),
+      }));
+      let ticking = false;
+      function update() {
+        ticking = false;
+        if (reduce.matches) return;
+        const vh = innerHeight;
+        for (const s of scenes) {
+          const r = s.host.getBoundingClientRect();
+          if (r.bottom < 0 || r.top > vh) continue;
+          // Distance of the scene's centre from the viewport's centre.
+          // Heroes at the top of the page start at rest and move as you scroll
+          // away; anything further down settles as it reaches mid-screen.
+          const offset = s.host.dataset.anchor === 'top'
+            ? -r.top
+            : Math.max(-120, Math.min(120, vh / 2 - (r.top + r.height / 2)));
+          for (const l of s.layers) {
+            l.g.style.transform = `translate3d(0, ${(offset * l.depth * 0.45).toFixed(1)}px, 0)`;
+          }
+        }
+      }
+      addEventListener('scroll', () => {
+        if (!ticking) { ticking = true; requestAnimationFrame(update); }
+      }, { passive: true });
+      addEventListener('resize', update);
+      update();
+    </script>
+
+    <style>
+      .site-header {
+        position: relative;
+        z-index: 20;
+        color: var(--ink);
+      }
+      .site-header.overlay {
+        position: absolute;
+        inset: 0 0 auto 0;
+        color: #eef3f1;
+      }
+      .header-inner {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        padding-block: 1.1rem;
+      }
+      .wordmark {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        color: inherit;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 1.15rem;
+        letter-spacing: -0.02em;
+        font-stretch: 85%;
+      }
+      nav { margin-left: auto; }
+      nav ul { display: flex; gap: 0.2rem; list-style: none; margin: 0; padding: 0; flex-wrap: wrap; }
+      nav a {
+        color: inherit;
+        text-decoration: none;
+        font-weight: 550;
+        font-size: 0.98rem;
+        padding: 0.4rem 0.7rem;
+        border-radius: 999px;
+      }
+      nav a:hover { background: color-mix(in oklab, currentColor 12%, transparent); }
+      nav a[aria-current='page'] { background: color-mix(in oklab, currentColor 16%, transparent); }
+      .theme-toggle {
+        background: none;
+        border: 0;
+        color: inherit;
+        padding: 0.4rem;
+        border-radius: 50%;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+      }
+      .theme-toggle:hover { background: color-mix(in oklab, currentColor 12%, transparent); }
+
+      @media (max-width: 720px) {
+        .header-inner { flex-wrap: wrap; row-gap: 0.4rem; }
+        nav { order: 3; margin-left: -0.7rem; width: 100%; }
+        .theme-toggle { margin-left: auto; }
+      }
+
+      .site-footer {
+        position: relative;
+        margin-top: 5rem;
+        color: #dbe5e3;
+        --haze: #6f95a0;
+      }
+      .footer-ridges {
+        position: relative;
+        height: clamp(110px, 16vw, 230px);
+        overflow: hidden;
+        margin-bottom: -1px;
+      }
+      .footer-base { background: var(--ridge-near); }
+      .footer-inner { padding-block: 1rem 2.5rem; }
+      .footer-name { font-weight: 700; font-size: var(--step-2); margin: 0 0 1rem; letter-spacing: -0.02em; }
+      .footer-links { list-style: none; padding: 0; margin: 0 0 2rem; display: flex; flex-wrap: wrap; gap: 0.4rem 1.4rem; }
+      .footer-links a { color: inherit; }
+      .footer-small { font-size: var(--step--1); color: #94a8ad; margin: 0; }
+    </style>
+  </body>
+</html>
