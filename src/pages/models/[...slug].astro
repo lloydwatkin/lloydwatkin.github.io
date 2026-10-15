@@ -2,7 +2,7 @@
 import { render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ModelViewer from '../../components/ModelViewer.astro';
-import DrillGuideGenerator from '../../components/generators/DrillGuideGenerator.astro';
+import ParametricGenerator from '../../components/generators/ParametricGenerator.astro';
 import { getModels, formatDate } from '../../lib/content';
 import { getCategory } from '../../data/categories';
 
@@ -25,8 +25,8 @@ const fileName = file.split('/').pop();
       <p class="desc">{description}</p>
     </header>
 
-    {generator === 'drill-guide'
-      ? <DrillGuideGenerator src={file} color={color} label={title} />
+    {generator
+      ? <ParametricGenerator generator={generator} src={file} color={color} label={title} />
       : <ModelViewer src={file} format={format} color={color} label={title} />}
 
     <div class="cols">
