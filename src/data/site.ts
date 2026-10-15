@@ -11,6 +11,7 @@ export const site = {
   ],
   social: [
     { href: 'https://github.com/lloydwatkin', label: 'GitHub' },
+    { href: 'https://www.instagram.com/lloydwatkin/', label: 'Instagram' },
     { href: '/rss.xml', label: 'RSS' },
   ],
 };
