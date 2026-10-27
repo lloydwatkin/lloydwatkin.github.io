@@ -212,3 +212,8 @@ h1, h2, h3, h4 {
   max-width: 44ch;
   line-height: 1.4;
 }
+
+/* Wide tables scroll sideways on narrow screens instead of pushing the page wider. */
+@media (max-width: 40rem) {
+  .prose table { display: block; overflow-x: auto; }
+}
