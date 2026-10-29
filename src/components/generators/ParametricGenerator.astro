@@ -8,8 +8,9 @@ import ModelViewer from '../ModelViewer.astro';
 import * as drillGuide from '../../lib/models/drill-guide.js';
 import * as boardJoint from '../../lib/models/board-joint.js';
 import * as hangingRail from '../../lib/models/hanging-rail.js';
+import * as keyHolder from '../../lib/models/key-holder.js';
 
-const generators = { 'drill-guide': drillGuide, 'board-joint': boardJoint, 'hanging-rail': hangingRail };
+const generators = { 'drill-guide': drillGuide, 'board-joint': boardJoint, 'hanging-rail': hangingRail, 'key-holder': keyHolder };
 
 interface Props {
   generator: keyof typeof generators;
@@ -72,6 +73,7 @@ const id = (key: string) => `${generator}-${key}`;
   import * as drillGuide from '../../lib/models/drill-guide.js';
   import * as boardJoint from '../../lib/models/board-joint.js';
   import * as hangingRail from '../../lib/models/hanging-rail.js';
+  import * as keyHolder from '../../lib/models/key-holder.js';
 
   type Model = {
     parameters: { key: string; default: unknown; options?: readonly string[] }[];
@@ -82,7 +84,7 @@ const id = (key: string) => `${generator}-${key}`;
     fileName: (p: Record<string, unknown>) => string;
     toStl: (m: any) => ArrayBuffer;
   };
-  const generators: Record<string, Model> = { 'drill-guide': drillGuide, 'board-joint': boardJoint, 'hanging-rail': hangingRail };
+  const generators: Record<string, Model> = { 'drill-guide': drillGuide, 'board-joint': boardJoint, 'hanging-rail': hangingRail, 'key-holder': keyHolder };
 
   type Viewer = HTMLElement & { showStl?: (data: ArrayBuffer) => void };
 
