@@ -1,0 +1,68 @@
+---
+title: A horse jewellery box with a two-colour lid
+description: A 3D printed jewellery box for my daughter, with a horse head inlaid in the lid, horseshoes on the sides and a grid of little cubbies for stud earrings.
+date: 2026-11-14
+category: diy
+tags: [3d printing, creality k2, horses]
+---
+import ModelViewer from '../../components/ModelViewer.astro';
+
+My daughter's earrings had been living in a mix of little bags and pots, so I printed her a jewellery box. She's horse mad, so it has a horse head on the lid and lucky horseshoes on the sides.
+
+<figure>
+  <img src="/models/horse-jewellery-box.jpg" alt="A closed pink box with a white horse head and a thin white border inlaid flush in the lid, and a raised horseshoe on the front below a thumb notch." width="1600" height="1205" loading="lazy" />
+</figure>
+
+## The design
+
+The first version was 110 × 80 mm with one big compartment and two small ones. That was too small, and studs get lost in a big compartment, so the second version grew to 150 × 100 mm (54 mm tall with the lid on) and gained a grid of cubbies:
+
+- **Twelve earring cubbies** down the right-hand side, about 18 × 23 mm each, one pair to a cubby. The walls between them are only 16 mm tall so small fingers can reach the bottom.
+- **A large compartment** at the back for necklaces and bracelets.
+- **A long tray** at the front for rings, hair clips and dangly earrings.
+- **A thumb notch** in the front edge, so there's something to get a finger under when lifting the lid.
+- **Horseshoes** on all four sides, the right way up so the luck doesn't run out.
+
+The lid has a lip that drops 5 mm inside the base, with 0.25 mm of clearance on each side, so it sits snugly without hinges or magnets.
+
+<ModelViewer src="/models/horse-jewellery-box-base.stl" format="stl" color="#f2707f" label="Horse jewellery box base" />
+
+## Printing the lid upside down
+
+The lid prints upside down so the top comes out with the texture of the build plate. The horse and border are a separate part sitting in a 1 mm recess, and the printer's multi-colour unit swaps filament for the first few layers. That's only a couple of grams of the second colour, so the swaps don't cost much. On the plate the horse is the wrong way round, and it's the right way round once the lid's flipped over.
+
+<figure class="portrait">
+  <img src="/models/horse-jewellery-box-printing.jpg" alt="The pink lid on the printer's build plate, with the white horse head and border printed into it, mirrored because the lid prints upside down." width="900" height="1600" loading="lazy" />
+  <figcaption>The lid on the K2, upside down, with the white inlay in the first layers.</figcaption>
+</figure>
+
+The base needs no supports. The horseshoes are raised 0.8 mm from the walls, and the vertical walls print them cleanly.
+
+<div class="photo-pair">
+  <figure>
+    <img src="/models/horse-jewellery-box-base.jpg" alt="The empty pink base on a shelf, showing the large compartment, the front tray, the grid of earring cubbies and a raised horseshoe on the front." width="1600" height="900" loading="lazy" />
+    <figcaption>The base, straight off the printer.</figcaption>
+  </figure>
+  <figure>
+    <img src="/models/horse-jewellery-box-open.jpg" alt="The box open with the lid beside it, stud earrings in the cubbies and dangly earrings in the front tray." width="1600" height="1205" loading="lazy" />
+    <figcaption>In use, with the studs in the cubbies.</figcaption>
+  </figure>
+</div>
+
+## Files and settings
+
+- [Base (STL)](/models/horse-jewellery-box-base.stl): print upright, as downloaded.
+- [Lid (STL)](/models/horse-jewellery-box-lid.stl): already flipped, decorated face down.
+- [Lid inlay (STL)](/models/horse-jewellery-box-lid-inlay.stl): the horse and border, for a second colour.
+- [Two-colour lid (3MF)](/models/horse-jewellery-box-lid-2colour.3mf): the lid and inlay together. Load it as one object with two parts and give the inlay its own colour.
+
+I used PLA at 0.2 mm layers, 3 walls and 15% infill. With a single colour, just print the lid on its own and the horse comes out as a 1 mm deep recess, which still looks good.
+
+I designed it with Claude, which wrote the model in Python with [manifold3d](https://github.com/elalish/manifold), the same geometry library the other [models](/models/) on this site use. It's also on the [models page](/models/horse-jewellery-box/).
+
+<style>{`
+  .photo-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .photo-pair figure { margin: 0; }
+  .portrait { max-width: 26rem; margin-inline: auto; }
+  @media (max-width: 520px) { .photo-pair { grid-template-columns: 1fr; } }
+`}</style>
