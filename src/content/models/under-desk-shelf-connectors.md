@@ -33,6 +33,14 @@ Change **Shelf thickness** for a different board and **Hanger length** to hang t
   <figcaption>One connector, cut in half.</figcaption>
 </figure>
 
+## The printed parts
+
+Here's a default set, printed. The support and hanger are in black, and the bracket in grey is shown slot-side up, the way it prints.
+
+<figure>
+  <img src="/models/under-desk-shelf-printed.jpg" alt="A printed set of the three connector parts on a grey carpet: the black threaded support with its notched flange, the grey bracket with its U-shaped slot and four screw holes, and the black hanger with its wide head and long rod." width="1200" height="1593" loading="lazy" />
+</figure>
+
 ## How it holds
 
 The bracket's floor has a 21 mm slot for the hanger's neck, which leaves a ledge on each side. The hanger's 44 mm head can't fit through the slot, so it rests on the ledges. The top of the bracket is open, and the desk closes it off once the bracket is screwed on. That way it prints flat without supports.
