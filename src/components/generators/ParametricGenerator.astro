@@ -8,11 +8,12 @@ import ModelViewer from '../ModelViewer.astro';
 import * as drillGuide from '../../lib/models/drill-guide.js';
 import * as boardJoint from '../../lib/models/board-joint.js';
 import * as hangingRail from '../../lib/models/hanging-rail.js';
+import * as horseJumps from '../../lib/models/horse-jumps.js';
 import * as keyHolder from '../../lib/models/key-holder.js';
 import * as slatePlaque from '../../lib/models/slate-plaque.js';
 import * as underDeskShelf from '../../lib/models/under-desk-shelf.js';
 
-const generators = { 'drill-guide': drillGuide, 'board-joint': boardJoint, 'hanging-rail': hangingRail, 'key-holder': keyHolder, 'slate-plaque': slatePlaque, 'under-desk-shelf': underDeskShelf };
+const generators = { 'drill-guide': drillGuide, 'board-joint': boardJoint, 'hanging-rail': hangingRail, 'key-holder': keyHolder, 'slate-plaque': slatePlaque, 'under-desk-shelf': underDeskShelf, 'horse-jumps': horseJumps };
 
 interface Props {
   generator: keyof typeof generators;
@@ -75,6 +76,7 @@ const id = (key: string) => `${generator}-${key}`;
   import * as drillGuide from '../../lib/models/drill-guide.js';
   import * as boardJoint from '../../lib/models/board-joint.js';
   import * as hangingRail from '../../lib/models/hanging-rail.js';
+  import * as horseJumps from '../../lib/models/horse-jumps.js';
   import * as keyHolder from '../../lib/models/key-holder.js';
   import * as slatePlaque from '../../lib/models/slate-plaque.js';
   import * as underDeskShelf from '../../lib/models/under-desk-shelf.js';
@@ -88,7 +90,7 @@ const id = (key: string) => `${generator}-${key}`;
     fileName: (p: Record<string, unknown>) => string;
     toStl: (m: any) => ArrayBuffer;
   };
-  const generators: Record<string, Model> = { 'drill-guide': drillGuide, 'board-joint': boardJoint, 'hanging-rail': hangingRail, 'key-holder': keyHolder, 'slate-plaque': slatePlaque, 'under-desk-shelf': underDeskShelf };
+  const generators: Record<string, Model> = { 'drill-guide': drillGuide, 'board-joint': boardJoint, 'hanging-rail': hangingRail, 'key-holder': keyHolder, 'slate-plaque': slatePlaque, 'under-desk-shelf': underDeskShelf, 'horse-jumps': horseJumps };
 
   type Viewer = HTMLElement & { showStl?: (data: ArrayBuffer) => void };
 
