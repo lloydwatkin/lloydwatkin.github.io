@@ -11,7 +11,12 @@
 //   The peg pushes through any hole in the stand. The cradle is shallow on
 //   purpose so a knocked pole rolls off, like a real one.
 // - The pole is as long as the printer bed allows, laid straight across or
-//   corner to corner. It has a small flat underneath so it sits on the bed.
+//   corner to corner. Underneath it has a 6 mm flat with 45° sides up to the
+//   round, so it has a proper footprint and no steep overhang to curl and get
+//   knocked loose. The ends are flat-bottomed with a small chamfer.
+// - Optional mouse ears (thin discs, two layers thick) along each pole hold it
+//   down; peel them off after printing. The tray plate puts several straight
+//   poles side by side.
 //
 // `wasm` is an initialised manifold-3d module: `const wasm = await Module(); wasm.setup()`.
 
@@ -19,8 +24,10 @@ import { toStl as writeStl } from './stl.js';
 
 /** Every adjustable parameter, with defaults and limits for the form. Units are mm. */
 export const parameters = [
-  { key: 'parts', label: 'Parts', default: 'stands', options: ['stands', 'cups', 'pole'], labels: { stands: 'Two stands', cups: 'Jump cups', pole: 'One pole' }, help: 'Three print plates. Print the pole plate once per pole, in white.' },
+  { key: 'parts', label: 'Parts', default: 'stands', options: ['stands', 'cups', 'pole', 'tray'], labels: { stands: 'Two stands', cups: 'Jump cups', pole: 'One pole', tray: 'Tray of poles' }, help: 'Print the poles in white: one at a time (longest) or a tray of straight ones.' },
   { key: 'bed', label: 'Printer bed size', default: 260, min: 150, max: 400, step: 1, help: 'Width of a square bed. Creality K2: 260, K2 Pro: 300, K2 Plus: 350. The pole is made as long as fits.' },
+  { key: 'count', label: 'Poles on the tray', default: 10, min: 2, max: 20, step: 1, unit: '', help: 'Straight poles side by side. Limited to what fits the bed.' },
+  { key: 'ears', label: 'Mouse ears', default: 'yes', options: ['yes', 'no'], labels: { yes: 'Yes', no: 'No' }, help: 'Thin discs along each pole that hold it to the bed. Peel off after printing.' },
   { key: 'layout', label: 'Pole on the bed', default: 'diagonal', options: ['diagonal', 'straight'], labels: { diagonal: 'Corner to corner (longest)', straight: 'Straight across' } },
   { key: 'poleD', label: 'Pole diameter', default: 10, min: 6, max: 16, step: 0.5, help: 'The cups and stand holes are sized from it.' },
   { key: 'height', label: 'Stand height', default: 200, min: 100, max: 300, step: 1, help: 'To the top of the ball.' },
@@ -43,6 +50,7 @@ export function normalise(raw = {}) {
     }
   }
   out.cups = Math.round(out.cups);
+  out.count = Math.round(out.count);
   return out;
 }
 
@@ -57,35 +65,95 @@ const BALL_D = 20;            // ball on top of the post
 const FIRST_HOLE = 30;        // lowest hole centre above the ground
 const HOLE_D = 5.4;           // peg holes
 const PEG_D = 5;              // a 0.2 mm gap all round
-const FLAT = 0.8;             // flat on the pole's underside
+const KEEL_W = 6;             // width of the flat under the pole
+const END_CH = 0.8;           // chamfer round the pole ends
+const EAR_D = 20;             // mouse ear diameter
+const EAR_T = 0.4;            // two 0.2 mm layers
+const EAR_EVERY = 80;         // roughly how far apart the ears go
+const TRAY_GAP = 2;           // between neighbouring ears on the tray
 const MARGIN = 5;             // kept clear at each edge of the bed
 
 /** Sizes that follow from the parameters. */
 export function describe(raw) {
   const p = normalise(raw);
   const usable = p.bed - 2 * MARGIN;
-  const poleLength = Math.floor(p.layout === 'diagonal' ? usable * Math.SQRT2 - p.poleD - 2 : usable);
+  const poleLength = Math.floor(p.layout === 'diagonal' && p.parts !== 'tray' ? usable * Math.SQRT2 - p.poleD - 2 : usable);
+  const pitch = (p.ears === 'yes' ? EAR_D : p.poleD) + TRAY_GAP;
+  const trayCount = Math.max(1, Math.min(p.count, Math.floor((usable - (pitch - TRAY_GAP)) / pitch) + 1));
   const postTop = p.height - BALL_D * 0.8;
   const holes = [];
   for (let h = FIRST_HOLE; h <= postTop - 25; h += p.spacing) holes.push(h);
-  return { ...p, poleLength, postTop, holes };
+  return { ...p, poleLength, postTop, holes, pitch, trayCount };
 }
 
 // --------------------------------------------------------------------- pole
 
-function pole(wasm, d) {
+/**
+ * Pole cross-section in the YZ plane, sitting on z = 0: the round, plus a flat
+ * KEEL_W wide joined to it by 45° sides.
+ */
+function poleProfile(wasm, d) {
+  const { CrossSection } = wasm;
+  const r = d.poleD / 2;
+  const c = Math.SQRT2 * r - KEEL_W / 2;   // centre height that puts the 45° tangents on the flat's edges
+  // The round dips just below the flat; the flat cuts that off.
+  return CrossSection.hull([
+    CrossSection.circle(r, 64).translate([0, c]),
+    CrossSection.square([KEEL_W, 0.01]).translate([-KEEL_W / 2, 0]),
+  ]).intersect(CrossSection.square([4 * r, 4 * r]).translate([-2 * r, 0]));
+}
+
+/** Height of the pole lying on its flat. */
+const poleHeight = (d) => Math.SQRT2 * d.poleD / 2 - KEEL_W / 2 + d.poleD / 2;
+
+function poleBody(wasm, d, length) {
   const { Manifold } = wasm;
-  const r = d.poleD / 2, L = d.poleLength;
+  const prof = poleProfile(wasm, d);
+  // The end face is the profile shrunk by END_CH and moved down again, so the
+  // flat still runs right to the end.
+  const end = prof.offset(-END_CH, 'Round', 2, 32).translate([0, -END_CH]);
+  const ring = (cs, z) => cs.toPolygons().flat().map(([x, y]) => [x, y, z]);
+  const cap = (zEnd, zFull) => Manifold.hull([...ring(end, zEnd), ...ring(prof, zFull)]);
   const rod = Manifold.union([
-    Manifold.cylinder(L - d.poleD, r, r, 64).translate([0, 0, r]),
-    Manifold.sphere(r, 64).translate([0, 0, r]),
-    Manifold.sphere(r, 64).translate([0, 0, L - r]),
-  ]).rotate([0, 90, 0]);           // now along X, centred on z = 0
-  const { min } = rod.boundingBox();
-  const keep = Manifold.cube([L + 2, d.poleD + 2, d.poleD]).translate([min[0] - 1, -r - 1, -r + FLAT]);
-  let out = rod.intersect(keep);
+    cap(0, END_CH),
+    Manifold.extrude(prof, length - 2 * END_CH).translate([0, 0, END_CH]),
+    cap(length, length - END_CH),
+  ]);
+  // Extruded along Z with the profile in XY (X across, Y up). Turn it so the
+  // pole runs along X with the flat on z = 0.
+  return rod.rotate([90, 0, 0]).rotate([0, 0, 90]);
+}
+
+/** Thin discs along a pole of `length` running along X from 0. */
+function ears(wasm, d, length) {
+  const { Manifold } = wasm;
+  const r = EAR_D / 2;
+  const first = r, last = length - r;
+  const n = Math.max(2, Math.round((last - first) / EAR_EVERY) + 1);
+  const discs = [];
+  for (let i = 0; i < n; i++) discs.push(Manifold.cylinder(EAR_T, r, r, 48).translate([first + ((last - first) * i) / (n - 1), 0, 0]));
+  return Manifold.union(discs);
+}
+
+/** One pole along X from 0 to length, centred on y = 0, on z = 0, with ears if asked. */
+function poleOnBed(wasm, d, length, withEars) {
+  let rod = poleBody(wasm, d, length);
+  const { min, max } = rod.boundingBox();
+  rod = rod.translate([-min[0], -(min[1] + max[1]) / 2, -min[2]]);
+  return withEars ? wasm.Manifold.union([rod, ears(wasm, d, length)]) : rod;
+}
+
+function pole(wasm, d) {
+  let out = poleOnBed(wasm, d, d.poleLength, d.ears === 'yes');
   if (d.layout === 'diagonal') out = out.rotate([0, 0, 45]);
   return out;
+}
+
+function tray(wasm, d) {
+  const one = poleOnBed(wasm, d, d.poleLength, d.ears === 'yes');
+  const rows = [];
+  for (let i = 0; i < d.trayCount; i++) rows.push(one.translate([0, i * d.pitch, 0]));
+  return wasm.Manifold.union(rows);
 }
 
 // -------------------------------------------------------------------- stand
@@ -175,11 +243,20 @@ const centred = (m) => {
   return m.translate([-(min[0] + max[0]) / 2, -(min[1] + max[1]) / 2, -min[2]]);
 };
 
+/** The tray's poles as separate shapes, laid out as on the tray plate. */
+export function trayPoles(wasm, raw) {
+  const d = describe({ ...raw, parts: 'tray' });
+  const one = poleOnBed(wasm, d, d.poleLength, d.ears === 'yes');
+  const offset = ((d.trayCount - 1) * d.pitch) / 2;
+  return Array.from({ length: d.trayCount }, (_, i) => one.translate([-d.poleLength / 2, i * d.pitch - offset, 0]));
+}
+
 /** Build one print plate. Returns a manifold-3d Manifold, Z up, sitting on z = 0. */
 export function build(wasm, raw) {
   const d = describe(raw);
   const { Manifold } = wasm;
   if (d.parts === 'pole') return centred(pole(wasm, d));
+  if (d.parts === 'tray') return centred(tray(wasm, d));
   if (d.parts === 'cups') {
     const one = cup(wasm, d);
     const { max } = one.boundingBox();
@@ -202,12 +279,14 @@ export function assembly(wasm, raw, holeIndex = 2) {
   const span = d.poleLength - 8;                    // centre to centre of the posts
   const s = stand(wasm, d);
   const c = cupInUse(wasm, d).translate([POST_W / 2, 0, h]);
-  const rod = centred(pole(wasm, { ...d, layout: 'straight' }));
+  const rod = centred(poleOnBed(wasm, d, d.poleLength, false));
+  // Sit the round part of the pole in the cradle.
   const seatBottom = d.poleD / 2 + 1 - (d.poleD / 2 + 0.6);
+  const roundBottom = poleHeight(d) - d.poleD;
   return {
     stands: Manifold.union([s.translate([-span / 2, 0, 0]), s.translate([span / 2, 0, 0])]),
     cups: Manifold.union([c.translate([-span / 2, 0, 0]), c.rotate([0, 0, 180]).translate([span / 2, 0, 0])]),
-    pole: rod.translate([0, 0, h + seatBottom - FLAT]),
+    pole: rod.translate([0, 0, h + seatBottom - roundBottom]),
   };
 }
 
@@ -218,6 +297,7 @@ export function summary(raw, box) {
   const size = box ? ` · ${r(box.max[0] - box.min[0])} × ${r(box.max[1] - box.min[1])} × ${r(box.max[2] - box.min[2])} mm` : '';
   const heights = `${d.holes.length} heights, ${d.holes[0]}–${d.holes[d.holes.length - 1]} mm`;
   if (d.parts === 'pole') return `${d.poleLength} mm pole${d.layout === 'diagonal' ? ', corner to corner' : ''}${size}`;
+  if (d.parts === 'tray') return `${d.trayCount} × ${d.poleLength} mm poles${d.trayCount < d.count ? ` (only ${d.trayCount} fit)` : ''}${size}`;
   if (d.parts === 'cups') return `${d.cups} cups for a ${r(d.poleD)} mm pole${size}`;
   return `Two ${r(d.height)} mm stands · ${heights}${size}`;
 }
@@ -225,6 +305,7 @@ export function summary(raw, box) {
 export function fileName(raw) {
   const d = describe(raw);
   if (d.parts === 'pole') return `horse-jump-pole-${d.poleLength}mm.stl`;
+  if (d.parts === 'tray') return `horse-jump-poles-${d.trayCount}x${d.poleLength}mm.stl`;
   if (d.parts === 'cups') return `horse-jump-cups-${d.cups}x.stl`;
   return `horse-jump-stands-${d.height}mm.stl`;
 }
